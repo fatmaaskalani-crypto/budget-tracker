@@ -1,0 +1,3076 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#3568d4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Wallet Tracker">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Wallet Tracker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%233568d4'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle'%3E💰%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f0f2f5;--card:#ffffff;--text:#1a1d26;--muted:#6b7280;--line:#e8eaef;
+  --green:#159947;--red:#dc3545;--blue:#3b6fd4;--orange:#d97706;--purple:#7c3aed;--teal:#0f9d8a;
+  --shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03);
+  --input-bg:#f8f9fb;--hover:#eef2ff;--radius:14px;
+}
+[data-theme="dark"]{
+  --bg:#12151a;--card:#1c222d;--text:#e8ecf1;--muted:#8b95a5;--line:#2c3440;
+  --green:#34d399;--red:#f87171;--blue:#60a5fa;--orange:#fbbf24;--purple:#a78bfa;--teal:#2dd4bf;
+  --shadow:0 1px 3px rgba(0,0,0,.2),0 4px 16px rgba(0,0,0,.15);
+  --input-bg:#252d3a;--hover:#2a3344;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.45;transition:background .2s,color .2s;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}
+.wrap{max-width:1040px;margin:auto;padding:16px 16px 32px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+h1{font-size:1.4rem;margin:0;font-weight:700;letter-spacing:-.02em}
+h2{font-size:1.05rem;margin:0 0 10px;font-weight:650}
+h3{font-size:.95rem;margin:0 0 8px;font-weight:650}
+.muted{color:var(--muted);font-size:.8rem;line-height:1.4}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid-6{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.card .muted{font-size:.72rem;text-transform:uppercase;letter-spacing:.03em;font-weight:600;margin-bottom:2px}
+.balance{font-size:1.25rem;font-weight:700;margin-top:4px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.income{color:var(--green)}.expense{color:var(--red)}.net{color:var(--blue)}.invest{color:var(--teal)}
+.safe{color:var(--teal)}.warn{color:var(--orange)}
+.strict-on{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(220,53,69,.15)}
+.alert-bar{padding:12px 16px;border-radius:12px;margin:12px 0;font-weight:600;font-size:.9rem;display:none;line-height:1.4}
+.alert-bar.show{display:block}
+.alert-bar.danger{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+.alert-bar.warning{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+[data-theme="dark"] .alert-bar.danger{background:#2a1515;border-color:#5c2626;color:#fca5a5}
+[data-theme="dark"] .alert-bar.warning{background:#2a2310;border-color:#5c4d1f;color:#fcd34d}
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:10px}
+.quick-btn{padding:12px 8px;border-radius:12px;background:var(--input-bg);border:1px solid var(--line);text-align:center;font-size:.8rem;font-weight:600;color:var(--text);transition:background .15s,transform .1s}
+.quick-btn:active{transform:scale(.96);background:var(--hover)}
+.quick-btn .qamt{display:block;font-size:.95rem;font-weight:700;margin-top:3px;color:var(--red);font-variant-numeric:tabular-nums}
+.compare-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+.compare-row:last-child{border-bottom:0}
+.compare-row b{display:block;font-size:.95rem;font-variant-numeric:tabular-nums}
+.strict-badge{background:var(--red);color:#fff;font-size:.65rem;padding:2px 8px;border-radius:20px;margin-left:6px;font-weight:700;vertical-align:middle}
+.actions{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.btn{padding:9px 13px;border-radius:10px;background:var(--input-bg);color:var(--text);font-weight:600;font-size:.85rem;min-height:38px;border:1px solid var(--line);transition:background .15s,transform .1s}
+.btn:hover{background:var(--hover)}.btn:active{transform:scale(.97)}
+.primary{background:var(--blue);color:#fff;border-color:var(--blue)}.primary:hover{filter:brightness(1.08);background:var(--blue)}
+.danger{background:#fef2f2;color:var(--red);border-color:#fecaca}[data-theme="dark"] .danger{background:#2a1515;border-color:#5c2626}
+.btn.small{padding:5px 10px;min-height:30px;font-size:.78rem}
+.section{margin-top:12px}
+.two{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}
+.monthbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.monthbar button{background:var(--input-bg);border:1px solid var(--line);border-radius:8px;padding:6px 12px;color:var(--text);font-weight:600}
+.week,.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.week div{text-align:center;color:var(--muted);font-size:.7rem;font-weight:700;padding:4px;text-transform:uppercase;letter-spacing:.04em}
+.day{min-height:64px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px;text-align:left;position:relative;color:var(--text);transition:border-color .15s,background .15s}
+.day:hover{border-color:var(--blue)}.day.empty{background:transparent;border:0}
+.day.today{outline:2px solid var(--blue);outline-offset:1px}.day.selected{background:var(--hover);border-color:var(--blue)}
+.num{font-weight:700;font-size:.9rem}.dot{font-size:.68rem;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.dot.i{color:var(--green)}.dot.e{color:var(--red)}
+.summaryrow{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:10px 0;font-size:.9rem}.summaryrow:last-child{border-bottom:0}
+.tx{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.tx:last-child{border-bottom:0}
+.tx-title{font-weight:650;font-size:.95rem}.tag{display:inline-block;background:var(--input-bg);border:1px solid var(--line);border-radius:20px;padding:2px 8px;font-size:.7rem;margin-top:4px;margin-right:4px;color:var(--muted);font-weight:600}
+.tx-right{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.small{font-size:.8rem}
+form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:.75rem;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--input-bg);color:var(--text);margin-top:5px;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,212,.12)}
+textarea{min-height:70px;resize:vertical}
+.full{grid-column:1/-1}.form-actions{display:flex;gap:8px;justify-content:flex-end}
+.emptymsg{text-align:center;padding:28px 16px;color:var(--muted);font-size:.9rem}
+.progress{height:8px;background:var(--line);border-radius:20px;overflow:hidden}
+.progress>div{height:100%;background:var(--blue);border-radius:20px;transition:width .3s}
+.progress.over>div{background:var(--red)}
+.progress.goal>div{background:var(--teal)}
+.budget-item{margin:14px 0}.budget-head{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px;font-weight:600}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal.show{display:flex}
+.modalbox{background:var(--card);width:min(520px,100%);max-height:90vh;overflow:auto;border-radius:18px;padding:20px;color:var(--text);box-shadow:0 20px 50px rgba(0,0,0,.15)}
+.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.modalhead h2{margin:0;font-size:1.1rem}
+.x{background:var(--input-bg);border:1px solid var(--line);border-radius:50%;width:34px;height:34px;color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center}
+footer{text-align:center;color:var(--muted);font-size:.75rem;padding:28px 0 12px}
+.wallet-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.wallet-card{background:var(--input-bg);border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center}
+.wallet-card .wname{font-size:.7rem;font-weight:650;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em}
+.wallet-card .wbal{font-size:.95rem;font-weight:700;font-variant-numeric:tabular-nums}
+.wallet-form{display:grid;gap:12px}
+.wallet-form .row{display:grid;grid-template-columns:100px 1fr;align-items:center;gap:10px}
+.wallet-form label{margin:0;font-size:.85rem;color:var(--text);text-transform:none;letter-spacing:0}
+.wallet-form input{margin:0}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
+.filters input,.filters select{width:auto;min-width:130px;margin:0;padding:8px 12px;font-size:.85rem}
+.theme-btn{width:40px;height:40px;border-radius:50%;font-size:17px;display:flex;align-items:center;justify-content:center;background:var(--input-bg);border:1px solid var(--line)}
+.chart-bars{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.chart-row{display:grid;grid-template-columns:90px 1fr 75px;align-items:center;gap:8px;font-size:.85rem}
+.chart-bar{height:10px;background:var(--line);border-radius:8px;overflow:hidden}
+.chart-bar>div{height:100%;border-radius:8px;background:var(--blue)}
+.recurring-badge{background:var(--purple);color:#fff;font-size:.65rem;padding:2px 7px;border-radius:10px;margin-left:4px;font-weight:600}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:7px 14px;border-radius:20px;background:var(--input-bg);border:1px solid var(--line);font-size:.8rem;font-weight:600;color:var(--text)}
+.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.sec-head{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;user-select:none;padding:2px 0}
+.sec-head h2{margin:0;display:flex;align-items:center;gap:6px;font-size:1rem;font-weight:650}
+.sec-controls{display:flex;gap:6px;align-items:center}
+.sec-body{margin-top:12px}
+.sec-body.collapsed{display:none}
+.section.dragging{opacity:.92;box-shadow:0 12px 32px rgba(0,0,0,.12);z-index:10;transform:scale(1.01)}
+.section.drag-over{outline:2px dashed var(--blue);outline-offset:3px}
+.goal-card,.debt-card{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;background:var(--input-bg)}
+.goal-card h3,.debt-card h3{margin:0 0 6px;font-size:16px}
+#sections-container{display:flex;flex-direction:column;gap:0}
+/* Home is ALWAYS shown by default — never blank on refresh */
+#page-home{display:block}
+/* Only section pages are toggled by route */
+#sections-container > .section.page{display:none}
+#sections-container > .section.page.route-active{display:block}
+#sections-container > .section.page.route-active .sec-body,
+#sections-container > .section.page.route-active .sec-body.collapsed{display:block}
+/* When viewing a section, hide home */
+body.viewing-section #page-home{display:none}
+.drawer-nav button.active{background:var(--hover);color:var(--blue)}
+.page.route-active .longpress-hint{display:none}
+.longpress-hint{font-size:.7rem;color:var(--muted);font-weight:400;margin-left:4px;opacity:.7}
+.print-only{display:none}
+#budgetControlCard .grid > div{transition:border-color .15s}
+#topGrid .card{min-height:72px}
+/* Floating Action Button for mobile */
+.fab{display:none;position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--blue);color:#fff;font-size:28px;box-shadow:0 6px 20px rgba(59,111,212,.35);z-index:15;align-items:center;justify-content:center;border:0}
+.fab:active{transform:scale(.95)}
+.scroll-top{display:none;position:fixed;bottom:20px;left:20px;width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--line);color:var(--text);font-size:18px;z-index:15;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.scroll-top.show{display:flex}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(2px);z-index:30;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+.drawer-overlay.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(300px,86vw);background:var(--card);z-index:31;box-shadow:4px 0 24px rgba(0,0,0,.12);transform:translateX(-105%);transition:transform .25s ease;display:flex;flex-direction:column;overflow:hidden}
+.drawer.open{transform:translateX(0)}
+.drawer-header{padding:20px 18px 14px;border-bottom:1px solid var(--line)}
+.drawer-header h2{margin:0;font-size:1.15rem}
+.drawer-header .muted{margin-top:4px}
+.drawer-nav{flex:1;overflow-y:auto;padding:10px 0}
+.drawer-nav button{display:flex;align-items:center;gap:12px;width:100%;padding:13px 18px;background:transparent;border:0;color:var(--text);font-weight:600;font-size:.92rem;text-align:left;min-height:48px;transition:background .15s}
+.drawer-nav button:hover,.drawer-nav button:active{background:var(--hover)}
+.drawer-nav button .dicon{width:28px;text-align:center;font-size:1.1rem}
+.help-btn{width:32px;height:32px;min-height:32px;padding:0;border-radius:50%;font-weight:800;flex-shrink:0}
+.method-picker{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.method-picker button{padding:8px 12px;border-radius:20px;border:1px solid var(--line);background:var(--input-bg);font-size:.78rem;font-weight:600;color:var(--text);min-height:36px}
+.method-picker button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.method-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.method-panel-head h3{margin:0;font-size:1rem}
+.method-desc{color:var(--muted);font-size:.85rem;margin:0 0 12px;line-height:1.45}
+.tx-time{font-size:.72rem;color:var(--muted);font-weight:500}
+.drawer-nav button.dragging{opacity:.55;background:var(--hover)}
+.drawer-nav button.drag-over{outline:2px dashed var(--blue);outline-offset:-2px}
+.drawer-footer{padding:12px 14px 18px;border-top:1px solid var(--line);display:grid;gap:8px}
+.menu-btn{width:40px;height:40px;border-radius:10px;background:var(--input-bg);border:1px solid var(--line);font-size:20px;display:flex;align-items:center;justify-content:center;color:var(--text)}
+.exp-charts-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.exp-chart-card{background:var(--input-bg);border:1px solid var(--line);border-radius:12px;padding:12px}
+.exp-chart-card h4{margin:0 0 8px;font-size:.8rem;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.exp-chart-card .top-name{font-weight:700;font-size:.95rem;margin-bottom:2px}
+.exp-chart-card .top-amt{font-weight:700;font-size:1.05rem;color:var(--red);font-variant-numeric:tabular-nums}
+.exp-mini-bars{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.exp-mini-row{display:grid;grid-template-columns:70px 1fr 72px;gap:6px;align-items:center;font-size:.75rem}
+.exp-mini-bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden}
+.exp-mini-bar>div{height:100%;background:var(--red);border-radius:6px;opacity:.85}
+/* Mobile bottom safe area */
+body{padding-bottom:env(safe-area-inset-bottom)}
+
+@media print{
+  body{background:#fff;color:#000}
+  .no-print,.actions,.modal,.filters,.theme-btn,button,.monthbar button,.sec-controls,.fab,.scroll-top,.drawer,.drawer-overlay{display:none!important}
+  .print-only{display:block}
+  .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
+  .wrap{max-width:100%;padding:0}
+  .sec-body.collapsed{display:block!important}
+}
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  #topGrid{grid-template-columns:repeat(2,1fr)!important}
+  .two{grid-template-columns:1fr}
+  .wallet-grid{grid-template-columns:repeat(3,1fr)}
+  .exp-charts-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:700px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .wallet-grid{grid-template-columns:repeat(3,1fr)}
+  .actions{gap:6px}
+  .btn{padding:10px 12px;font-size:13px;min-height:42px}
+}
+@media(max-width:520px){
+  .wrap{padding:10px;padding-bottom:90px}
+  .grid{grid-template-columns:1fr 1fr;gap:8px}
+  #topGrid{grid-template-columns:1fr 1fr!important}
+  .exp-charts-grid{grid-template-columns:1fr}
+  .card{padding:12px;border-radius:14px}
+  .balance{font-size:17px}
+  .compare-row{grid-template-columns:1fr 1fr 1fr;font-size:12px}
+  .quick-grid{grid-template-columns:repeat(3,1fr)}
+  h1{font-size:20px}
+  header{margin-bottom:12px}
+  .day{min-height:52px;padding:4px}
+  .day .num{font-size:13px}
+  .dot{font-size:9px;margin-top:4px}
+  form{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .form-actions{grid-column:1/-1;flex-wrap:wrap}
+  .wallet-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .wallet-card{padding:10px}
+  .wallet-card .wbal{font-size:14px}
+  .wallet-form .row{grid-template-columns:1fr}
+  .chart-row{grid-template-columns:70px 1fr 65px;font-size:12px}
+  .filters{flex-direction:column;align-items:stretch}
+  .filters input,.filters select{width:100%;min-width:0}
+  .sec-head h2{font-size:15px}
+  .longpress-hint{display:none}
+  .sec-controls .btn.small{padding:5px 10px;font-size:12px}
+  .modalbox{padding:14px;border-radius:16px;max-height:88vh}
+  .tx{flex-wrap:wrap;gap:6px}
+  .tx-right{width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center}
+  .actions{overflow-x:auto;flex-wrap:nowrap;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+  .actions .btn{flex-shrink:0}
+  .fab{display:flex}
+  /* Hide the top + Transaction on very small screens since we have FAB */
+  header .primary{display:none}
+  .two{gap:12px}
+  .monthbar h2{font-size:16px}
+  .goal-card,.debt-card{padding:12px}
+  .summaryrow{padding:8px 0;font-size:14px}
+}
+@media(max-width:360px){
+  .grid{grid-template-columns:1fr}
+  .wallet-grid{grid-template-columns:1fr 1fr}
+  .balance{font-size:20px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="menu-btn no-print" onclick="openDrawer()" title="Menu" aria-label="Open menu">☰</button>
+    <div>
+      <h1>💰 Wallet Tracker</h1>
+      <div class="muted">Simple offline budget tracker</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="btn primary" onclick="openTx()">＋ Add</button>
+  </div>
+</header>
+
+<!-- Navigation Drawer -->
+<div class="drawer-overlay no-print" id="drawerOverlay" onclick="closeDrawer()"></div>
+<aside class="drawer no-print" id="navDrawer" aria-label="Navigation">
+  <div class="drawer-header">
+    <h2>💰 Menu</h2>
+    <div class="muted">Tap to open · Hold to reorder</div>
+  </div>
+  <nav class="drawer-nav" id="drawerNav"></nav>
+  <div class="drawer-footer">
+    <button class="btn" onclick="closeDrawer();openSettings()">⚙ Settings</button>
+    <button class="btn primary" onclick="closeDrawer();openTx()">＋ Add transaction</button>
+  </div>
+</aside>
+
+<!-- HOME PAGE (dashboard) -->
+<div id="page-home">
+<!-- Top Summary — essentials only -->
+<div class="grid" id="topGrid" style="grid-template-columns:repeat(4,1fr)">
+  <div class="card"><div class="muted">Wallet</div><div id="balance" class="balance">₱0.00</div></div>
+  <div class="card" id="dailyCard"><div class="muted">Today left</div><div id="dailyLimit" class="balance">₱0.00</div><div id="dailyLimitSub" class="muted" style="font-size:11px;margin-top:2px"></div></div>
+  <div class="card" id="safeCard"><div class="muted">Safe to spend</div><div id="safeSpend" class="balance safe">₱0.00</div></div>
+  <div class="card"><div class="muted">Net worth</div><div id="netWorth" class="balance invest">₱0.00</div></div>
+</div>
+<!-- Hidden fields still updated for system compatibility -->
+<span id="net" class="balance net" style="display:none">₱0.00</span>
+<span id="mExpenseTop" class="balance expense" style="display:none">₱0.00</span>
+
+<div class="muted no-print" style="margin:8px 0 0;font-size:.72rem">🟢 OK &nbsp; 🔴 Over limit / over budget</div>
+
+<!-- Budget Alerts -->
+<div id="budgetAlert" class="alert-bar"></div>
+
+<!-- Budget Control + Formulas -->
+<div class="card section" style="margin-top:12px" id="budgetControlCard">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+    <div>
+      <h3 style="margin:0">🎯 Budget Control <span id="strictBadge" class="strict-badge" style="display:none">STRICT</span></h3>
+      <div class="muted" id="budgetStatusText">Set monthly budget to enable daily limit & safe-to-spend</div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer">
+      <input type="checkbox" id="strictMode" onchange="toggleStrict()" style="width:20px;height:20px;margin:0">
+      Strict Mode
+    </label>
+  </div>
+
+  <div class="grid" style="margin-top:14px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+    <div style="background:var(--input-bg);border-radius:12px;padding:12px;border:1px solid var(--line)">
+      <div class="muted" style="font-size:11px">Avg Daily Spending</div>
+      <div id="avgDaily" class="balance" style="font-size:18px">₱0</div>
+    </div>
+    <div style="background:var(--input-bg);border-radius:12px;padding:12px;border:1px solid var(--line)">
+      <div class="muted" style="font-size:11px">Projected Month-End</div>
+      <div id="projectedEnd" class="balance" style="font-size:18px">₱0</div>
+    </div>
+    <div style="background:var(--input-bg);border-radius:12px;padding:12px;border:1px solid var(--line)">
+      <div class="muted" style="font-size:11px">Savings Rate</div>
+      <div id="savingsRate" class="balance" style="font-size:18px">0%</div>
+    </div>
+    <div style="background:var(--input-bg);border-radius:12px;padding:12px;border:1px solid var(--line)">
+      <div class="muted" style="font-size:11px">Money Runway</div>
+      <div id="moneyRunway" class="balance" style="font-size:18px">—</div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+    <div class="muted" style="margin-bottom:6px">Custom Daily Limit (ikaw ang mag-set)</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <input id="customDailyInput" type="number" min="0" step="0.01" placeholder="Hal. 500" style="margin:0;max-width:160px">
+      <button class="btn primary" onclick="saveCustomDaily()">Save</button>
+      <button class="btn" onclick="clearCustomDaily()">Clear</button>
+      <span id="customDailyLabel" class="muted"></span>
+    </div>
+  </div>
+
+  <div id="dailyInfo" class="muted" style="margin-top:12px"></div>
+</div>
+
+<!-- Today's spending list -->
+<div class="card section" style="margin-top:12px" id="todaySpendCard">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+    <h3 style="margin:0">📝 Today's spending</h3>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <select id="todaySort" onchange="renderTodaySpendList()" style="margin:0;width:auto;padding:6px 10px;font-size:.8rem">
+        <option value="time-desc">Time (newest)</option>
+        <option value="time-asc">Time (oldest)</option>
+        <option value="name-asc">Name (A–Z)</option>
+        <option value="name-desc">Name (Z–A)</option>
+        <option value="price-desc">Price (high–low)</option>
+        <option value="price-asc">Price (low–high)</option>
+        <option value="category">Category</option>
+      </select>
+      <button class="btn primary small no-print" onclick="openTx()">＋ Add</button>
+    </div>
+  </div>
+  <div id="todaySpendTotal" class="muted" style="margin-bottom:8px"></div>
+  <div id="todaySpendList"></div>
+</div>
+</div><!-- /page-home -->
+
+<input id="file" type="file" accept=".json" hidden onchange="importJSON(event)">
+
+<div id="sections-container">
+
+<!-- BIGGEST EXPENSE CHARTS -->
+<section class="card section page" data-sec="expcharts" id="sec-expcharts" data-route="expcharts">
+  <div class="sec-head" data-sec-id="expcharts" onclick="toggleSec('expcharts')">
+    <h2>📊 Biggest expenses <span class="longpress-hint no-print">· hold to move</span></h2>
+  </div>
+  <div class="sec-body" id="body-expcharts">
+    <div class="muted" style="margin-bottom:10px">Top spending by category — Today · Week · Month · Year</div>
+    <div id="expenseCharts" class="exp-charts-grid"></div>
+  </div>
+</section>
+
+<!-- QUICK ADD -->
+<section class="card section page" data-sec="quickadd" id="sec-quickadd" data-route="quickadd">
+  <div class="sec-head" data-sec-id="quickadd" onclick="toggleSec('quickadd')">
+    <h2>⚡ Quick Add <span class="longpress-hint no-print">· hold to move</span></h2>
+    <div class="sec-controls no-print" onclick="event.stopPropagation()">
+      <button class="btn small" onclick="openPresets()">Edit</button>
+    </div>
+  </div>
+  <div class="sec-body" id="body-quickadd">
+    <div class="muted" style="margin-bottom:6px">One-tap · uses today + default wallet</div>
+    <div id="quickAddGrid" class="quick-grid"></div>
+  </div>
+</section>
+
+<!-- MONTH COMPARE -->
+<section class="card section page" data-sec="compare" id="sec-compare" data-route="compare">
+  <div class="sec-head" data-sec-id="compare" onclick="toggleSec('compare')">
+    <h2>📊 This Month vs Last Month <span class="longpress-hint no-print">· hold to move</span></h2>
+  </div>
+  <div class="sec-body" id="body-compare">
+    <div id="compareTable"></div>
+  </div>
+</section>
+
+<section class="card section page" data-sec="wallets" id="sec-wallets" data-route="wallets">
+  <div class="sec-head" data-sec-id="wallets" onclick="toggleSec('wallets')">
+    <h2>👛 Wallet Balances <span class="longpress-hint no-print">· hold to move</span></h2>
+  </div>
+  <div class="sec-body" id="body-wallets">
+    <div class="muted" style="margin-bottom:8px">Starting + Income − Expenses + Transfers per wallet</div>
+    <div id="walletBalances" class="wallet-grid"></div>
+  </div>
+</section>
+
+<section class="card section page" data-sec="investment" id="sec-investment" data-route="investment">
+  <div class="sec-head" data-sec-id="investment" onclick="toggleSec('investment')">
+    <h2>📈 Investment Balance <span class="longpress-hint no-print">· hold to move</span></h2>
+    <div class="sec-controls no-print" onclick="event.stopPropagation()">
+      <button class="btn primary small" onclick="openInvestment()">＋ Update</button>
+    </div>
+  </div>
+  <div class="sec-body" id="body-investment">
+    <div class="muted">Current Investment Value</div>
+    <div id="investBal" class="balance invest" style="font-size:28px">₱0.00</div>
+    <div id="investNote" class="muted" style="margin-top:8px"></div>
+  </div>
+</section>
+
+<section class="card section page" data-sec="calendar" id="sec-calendar" data-route="calendar">
+  <div class="sec-head" data-sec-id="calendar" onclick="toggleSec('calendar')">
+    <h2>📅 Calendar & Day Summary <span class="longpress-hint no-print">· hold to move</span></h2>
+  </div>
+  <div class="sec-body" id="body-calendar">
+    <div class="two">
+      <div>
+        <div class="monthbar">
+          <button onclick="changeMonth(-1)">‹</button>
+          <h2 id="monthTitle" style="margin:0"></h2>
+          <button onclick="changeMonth(1)">›</button>
+        </div>
+        <div class="week"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+        <div id="calendar" class="cal"></div>
+      </div>
+      <div>
+        <div class="tabs" style="margin-bottom:10px">
+          <button class="tab active" id="sumTab-day" onclick="switchCalSummary('day',this)">Day</button>
+          <button class="tab" id="sumTab-week" onclick="switchCalSummary('week',this)">Week</button>
+          <button class="tab" id="sumTab-month" onclick="switchCalSummary('month',this)">Month</button>
+          <button class="tab" id="sumTab-year" onclick="switchCalSummary('year',this)">Year</button>
+        </div>
+        <h3 id="calSummaryTitle">📊 Daily Summary</h3>
+        <div class="summaryrow"><span>Income</span><b id="mIncome" class="income">₱0.00</b></div>
+        <div class="summaryrow"><span>Expenses</span><b id="mExpense" class="expense">₱0.00</b></div>
+        <div class="summaryrow"><span>Net</span><b id="mNet" class="net">₱0.00</b></div>
+        <div class="summaryrow"><span>Transactions</span><b id="mCount">0</b></div>
+        <div id="calSummaryExtra" class="muted" style="margin-top:8px;font-size:.8rem"></div>
+
+        <!-- Collapsible budgets -->
+        <div style="margin-top:14px;border:1px solid var(--line);border-radius:12px;overflow:hidden">
+          <button type="button" class="btn" id="budgetCollapseBtn" onclick="toggleBudgetCollapse()" style="width:100%;justify-content:space-between;display:flex;align-items:center;border:0;border-radius:0;background:var(--input-bg)">
+            <span style="font-weight:700">🎯 Budget limits</span>
+            <span id="budgetCollapseIcon">▶</span>
+          </button>
+          <div id="budgetCollapseBody" style="display:none;padding:12px;border-top:1px solid var(--line)">
+            <div style="display:grid;gap:12px">
+              <div>
+                <div class="muted" style="font-size:.72rem;margin-bottom:4px">Monthly budget</div>
+                <div class="actions" style="margin:0">
+                  <input id="budgetInput" type="number" min="0" step="0.01" placeholder="Hal. 15000" style="margin:0">
+                  <button class="btn primary" onclick="saveBudget()">Save</button>
+                </div>
+                <div id="budgetText" class="small"></div>
+                <div class="progress" id="budgetProgress"><div id="budgetBar" style="width:0%"></div></div>
+              </div>
+              <div>
+                <div class="muted" style="font-size:.72rem;margin-bottom:4px">Weekly budget</div>
+                <div class="actions" style="margin:0">
+                  <input id="weeklyBudgetInput" type="number" min="0" step="0.01" placeholder="Hal. 3500" style="margin:0">
+                  <button class="btn primary" onclick="saveWeeklyBudget()">Save</button>
+                </div>
+                <div id="weeklyBudgetText" class="small"></div>
+                <div class="progress" id="weeklyBudgetProgress"><div id="weeklyBudgetBar" style="width:0%"></div></div>
+              </div>
+              <div>
+                <div class="muted" style="font-size:.72rem;margin-bottom:4px">Daily budget</div>
+                <div class="actions" style="margin:0">
+                  <input id="dailyBudgetInput" type="number" min="0" step="0.01" placeholder="Hal. 500" style="margin:0">
+                  <button class="btn primary" onclick="saveDailyBudget()">Save</button>
+                </div>
+                <div id="dailyBudgetText" class="small"></div>
+                <div class="progress" id="dailyBudgetProgress"><div id="dailyBudgetBar" style="width:0%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected day transactions (merged) -->
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <h3 style="margin:0" id="dayTitle">📅 Selected Day</h3>
+        <button class="btn primary small no-print" onclick="openTx(selectedDate)">＋ Add</button>
+      </div>
+      <div id="dayTotals" class="muted" style="margin-bottom:10px"></div>
+      <div class="filters no-print">
+        <input type="search" id="searchInput" placeholder="🔍 Search..." oninput="renderDay()">
+        <select id="filterWallet" onchange="renderDay()"><option value="">All Wallets</option></select>
+        <select id="filterType" onchange="renderDay()">
+          <option value="">All Types</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+          <option value="transfer">Transfer</option>
+        </select>
+        <select id="daySort" onchange="renderDay()" style="width:auto">
+          <option value="time-desc">Time (newest)</option>
+          <option value="time-asc">Time (oldest)</option>
+          <option value="name-asc">Name (A–Z)</option>
+          <option value="name-desc">Name (Z–A)</option>
+          <option value="price-desc">Price (high–low)</option>
+          <option value="price-asc">Price (low–high)</option>
+          <option value="category">Category</option>
+        </select>
+      </div>
+      <div id="dayList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="card section page" data-sec="categories" id="sec-categories" data-route="categories">
+  <div class="sec-head" data-sec-id="categories" onclick="toggleSec('categories')">
+    <h2>📈 Categories & Budgets <span class="longpress-hint no-print">· hold to move</span></h2>
+    <div class="sec-controls no-print" onclick="event.stopPropagation()">
+      <button class="btn primary small" onclick="openCatBudget()">＋ Budget</button>
+    </div>
+  </div>
+  <div class="sec-body" id="body-categories">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('spend',this)">📈 Spending</button>
+      <button class="tab" onclick="switchTab('budget',this)">🎯 Budgets</button>
+    </div>
+    <div id="tabSpend"><div id="categories"></div></div>
+    <div id="tabBudget" style="display:none">
+      <p class="muted" style="margin-top:0">Mag-set ng budget per category. Pula kapag sobra.</p>
+      <div id="catBudgetList"></div>
+      <button class="btn primary" style="margin-top:10px" onclick="openCatBudget()">＋ Add / Edit Category Budget</button>
+    </div>
+  </div>
+</section>
+
+
+<section class="card section page" data-sec="methods" id="sec-methods" data-route="methods">
+  <div class="sec-head" data-sec-id="methods" onclick="toggleSec('methods')">
+    <h2>📬 Budget Methods <span class="longpress-hint no-print">· hold to move</span></h2>
+  </div>
+  <div class="sec-body" id="body-methods">
+    <p class="muted" style="margin-top:0">Pumili ng method. Pindutin ang <b>?</b> para sa buong explanation at steps.</p>
+    <div class="method-picker" id="methodPicker"></div>
+    <div id="methodPanels"></div>
+  </div>
+</section>
+
+<section class="card section page" data-sec="goals" id="sec-goals" data-route="goals">
+  <div class="sec-head" data-sec-id="goals" onclick="toggleSec('goals')">
+    <h2>🎯 Savings Goals <span class="longpress-hint no-print">· hold to move</span></h2>
+    <div class="sec-controls no-print" onclick="event.stopPropagation()">
+      <button class="btn primary small" onclick="openGoal()">＋ Add</button>
+    </div>
+  </div>
+  <div class="sec-body" id="body-goals">
+    <div id="goalsList"></div>
+  </div>
+</section>
+
+<section class="card section page" data-sec="debts" id="sec-debts" data-route="debts">
+  <div class="sec-head" data-sec-id="debts" onclick="toggleSec('debts')">
+    <h2>💳 Debts / Utang Tracker <span class="longpress-hint no-print">· hold to move</span></h2>
+    <div class="sec-controls no-print" onclick="event.stopPropagation()">
+      <button class="btn primary small" onclick="openDebt()">＋ Add</button>
+    </div>
+  </div>
+  <div class="sec-body" id="body-debts">
+    <div id="debtsList"></div>
+  </div>
+</section>
+
+<section class="card section page" data-sec="recurring" id="sec-recurring" data-route="recurring">
+  <div class="sec-head" data-sec-id="recurring" onclick="toggleSec('recurring')">
+    <h2>🔁 Recurring Transactions <span class="longpress-hint no-print">· hold to move</span></h2>
+    <div class="sec-controls no-print" onclick="event.stopPropagation()">
+      <button class="btn primary small" onclick="openRecurring()">＋ Add</button>
+    </div>
+  </div>
+  <div class="sec-body" id="body-recurring">
+    <div class="muted" style="margin-bottom:8px">Auto-suggested every month. Click “Add this month” to create.</div>
+    <div id="recurringList"></div>
+  </div>
+</section>
+
+</div>
+
+<footer>Auto-save is on · Data stays on this device · Install as app from browser menu</footer>
+</div>
+
+<button class="fab no-print" onclick="openTx()" title="Add" aria-label="Add Transaction">＋</button>
+<button class="scroll-top no-print" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<!-- MODALS -->
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2 id="modalTitle">Add Transaction</h2><button class="x" onclick="closeModal()">×</button></div>
+  <form id="txForm">
+    <input type="hidden" id="editId">
+    <label>Type<select id="type"><option value="expense">Expense</option><option value="income">Income</option></select></label>
+    <label>Amount (₱)<input id="amount" type="number" min="0.01" step="0.01" required></label>
+    <label>Date<input id="date" type="date" required></label>
+    <label>Time<input id="time" type="time" required></label>
+    <label>Category<select id="category"></select></label>
+    <label class="full">Description<input id="desc" placeholder="Hal. pagkain, pamasahe, sahod..." required></label>
+    <label>Payment / Wallet<select id="wallet"></select></label>
+    <label>Notes<textarea id="notes" placeholder="Optional"></textarea></label>
+    <label class="full" style="display:flex;align-items:center;gap:8px;font-weight:600">
+      <input type="checkbox" id="isRecurring" style="width:auto;margin:0"> Mark as Recurring (monthly)
+    </label>
+    <div class="form-actions full">
+      <button type="button" class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" type="submit">Save Transaction</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<div id="startModal" class="modal" onclick="if(event.target===this)closeStartModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2>⚙ Starting Balances</h2><button class="x" onclick="closeStartModal()">×</button></div>
+  <p class="muted" style="margin:0 0 14px">Ilagay ang starting balance per wallet. Lahat ay idadagdag sa Overall Wallet.</p>
+  <div class="wallet-form" id="startForm"></div>
+  <div class="form-actions" style="margin-top:16px">
+    <button type="button" class="btn" onclick="closeStartModal()">Cancel</button>
+    <button class="btn primary" onclick="saveStarting()">Save Starting Balances</button>
+  </div>
+</div>
+</div>
+
+<div id="transferModal" class="modal" onclick="if(event.target===this)closeTransferModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2>⇄ Transfer Between Wallets</h2><button class="x" onclick="closeTransferModal()">×</button></div>
+  <p class="muted" style="margin:0 0 14px">Maglipat ng pera. Hindi ito magiging income o expense.</p>
+  <form id="transferForm" style="display:grid;gap:12px">
+    <label>From Wallet<select id="tfFrom" required></select></label>
+    <label>To Wallet<select id="tfTo" required></select></label>
+    <label>Amount (₱)<input id="tfAmount" type="number" min="0.01" step="0.01" required></label>
+    <label>Date<input id="tfDate" type="date" required></label>
+    <label>Notes (optional)<input id="tfNotes" placeholder="Hal. cash-in sa GCash"></label>
+    <div class="form-actions">
+      <button type="button" class="btn" onclick="closeTransferModal()">Cancel</button>
+      <button class="btn primary" type="submit">Transfer</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<div id="investModal" class="modal" onclick="if(event.target===this)closeInvestModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2>📈 Investment Balance</h2><button class="x" onclick="closeInvestModal()">×</button></div>
+  <p class="muted" style="margin:0 0 14px">I-set o i-update ang current value ng investments mo (stocks, crypto, funds, etc.).</p>
+  <form id="investForm" style="display:grid;gap:12px">
+    <label>Current Investment Value (₱)<input id="investValue" type="number" min="0" step="0.01" required></label>
+    <label>Notes (optional)<input id="investNotes" placeholder="Hal. MP2 + Stocks + Crypto"></label>
+    <div class="form-actions">
+      <button type="button" class="btn" onclick="closeInvestModal()">Cancel</button>
+      <button class="btn primary" type="submit">Save</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<div id="catBudgetModal" class="modal" onclick="if(event.target===this)closeCatBudgetModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2>🎯 Category Budget</h2><button class="x" onclick="closeCatBudgetModal()">×</button></div>
+  <form id="catBudgetForm" style="display:grid;gap:12px">
+    <label>Category<select id="cbCategory" required></select></label>
+    <label>Monthly Budget (₱)<input id="cbAmount" type="number" min="0" step="0.01" required></label>
+    <div class="form-actions">
+      <button type="button" class="btn" onclick="closeCatBudgetModal()">Cancel</button>
+      <button class="btn primary" type="submit">Save Budget</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<div id="catModal" class="modal" onclick="if(event.target===this)closeCatModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2>🏷 Custom Categories</h2><button class="x" onclick="closeCatModal()">×</button></div>
+  <p class="muted" style="margin:0 0 12px">Mag-add o mag-delete ng categories. Ang ginagamit pa sa transactions ay hindi mabubura.</p>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <input id="newCatName" placeholder="New category name" style="margin:0;flex:1">
+    <button class="btn primary" onclick="addCategory()">Add</button>
+  </div>
+  <div id="catManageList"></div>
+</div>
+</div>
+
+<div id="goalModal" class="modal" onclick="if(event.target===this)closeGoalModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2 id="goalModalTitle">🎯 Add Savings Goal</h2><button class="x" onclick="closeGoalModal()">×</button></div>
+  <form id="goalForm" style="display:grid;gap:12px">
+    <input type="hidden" id="goalId">
+    <label>Goal Name<input id="goalName" required placeholder="Hal. Emergency Fund, Travel Japan"></label>
+    <label>Target Amount (₱)<input id="goalTarget" type="number" min="1" step="0.01" required></label>
+    <label>Current Saved (₱)<input id="goalCurrent" type="number" min="0" step="0.01" value="0"></label>
+    <label>Target Date (optional)<input id="goalDate" type="date"></label>
+    <label>Notes<textarea id="goalNotes" placeholder="Optional"></textarea></label>
+    <div class="form-actions">
+      <button type="button" class="btn" onclick="closeGoalModal()">Cancel</button>
+      <button class="btn primary" type="submit">Save Goal</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<div id="debtModal" class="modal" onclick="if(event.target===this)closeDebtModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2 id="debtModalTitle">💳 Add Debt / Utang</h2><button class="x" onclick="closeDebtModal()">×</button></div>
+  <form id="debtForm" style="display:grid;gap:12px">
+    <input type="hidden" id="debtId">
+    <label>Debt Name<input id="debtName" required placeholder="Hal. Credit Card, Personal Loan, 5-6"></label>
+    <label>Original Amount (₱)<input id="debtTotal" type="number" min="0" step="0.01" required></label>
+    <label>Remaining Balance (₱)<input id="debtRemaining" type="number" min="0" step="0.01" required></label>
+    <label>Interest / Notes<textarea id="debtNotes" placeholder="Hal. 2% per month, due every 15th"></textarea></label>
+    <div class="form-actions">
+      <button type="button" class="btn" onclick="closeDebtModal()">Cancel</button>
+      <button class="btn primary" type="submit">Save Debt</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<div id="payDebtModal" class="modal" onclick="if(event.target===this)closePayDebtModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2>💵 Record Payment</h2><button class="x" onclick="closePayDebtModal()">×</button></div>
+  <form id="payDebtForm" style="display:grid;gap:12px">
+    <input type="hidden" id="payDebtId">
+    <div class="muted" id="payDebtInfo"></div>
+    <label>Payment Amount (₱)<input id="payAmount" type="number" min="0.01" step="0.01" required></label>
+    <label>Date<input id="payDate" type="date" required></label>
+    <label>From Wallet<select id="payWallet"></select></label>
+    <label>Notes (optional)<input id="payNotes"></label>
+    <div class="form-actions">
+      <button type="button" class="btn" onclick="closePayDebtModal()">Cancel</button>
+      <button class="btn primary" type="submit">Record Payment</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<div id="recurringModal" class="modal" onclick="if(event.target===this)closeRecurringModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2>🔁 Add Recurring</h2><button class="x" onclick="closeRecurringModal()">×</button></div>
+  <form id="recurringForm" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <label>Type<select id="rType"><option value="expense">Expense</option><option value="income">Income</option></select></label>
+    <label>Amount (₱)<input id="rAmount" type="number" min="0.01" step="0.01" required></label>
+    <label>Category<select id="rCategory"></select></label>
+    <label>Wallet<select id="rWallet"></select></label>
+    <label class="full">Description<input id="rDesc" required placeholder="Hal. Electric bill, Salary"></label>
+    <label class="full">Notes<textarea id="rNotes" placeholder="Optional"></textarea></label>
+    <div class="form-actions full">
+      <button type="button" class="btn" onclick="closeRecurringModal()">Cancel</button>
+      <button class="btn primary" type="submit">Save Recurring</button>
+    </div>
+  </form>
+</div>
+</div>
+
+<!-- Presets / Quick Add Editor Modal -->
+<!-- Settings Popup -->
+
+<div id="methodHelpModal" class="modal" onclick="if(event.target===this)closeMethodHelp()">
+<div class="modalbox">
+  <div class="modalhead"><h2 id="methodHelpTitle">Paano gamitin</h2><button class="x" onclick="closeMethodHelp()">×</button></div>
+  <div id="methodHelpBody" style="line-height:1.55;font-size:.95rem"></div>
+  <div class="form-actions" style="margin-top:16px">
+    <button class="btn primary" onclick="closeMethodHelp()">Got it</button>
+  </div>
+</div>
+</div>
+<div id="settingsModal" class="modal" onclick="if(event.target===this)closeSettings()">
+<div class="modalbox">
+  <div class="modalhead"><h2>⚙ Settings</h2><button class="x" onclick="closeSettings()">×</button></div>
+  <div class="tabs" style="margin-bottom:14px">
+    <button class="tab active" onclick="switchSettingsTab('actions',this)">Actions</button>
+    <button class="tab" onclick="switchSettingsTab('data',this)">Data</button>
+    <button class="tab" onclick="switchSettingsTab('display',this)">Display</button>
+  </div>
+  <div id="settingsTab-actions">
+    <div style="display:grid;gap:8px">
+      <button class="btn" onclick="closeSettings();openTransfer()">⇄ Transfer between wallets</button>
+      <button class="btn" onclick="closeSettings();openStarting()">💰 Starting balances</button>
+      <button class="btn" onclick="closeSettings();openPresets()">⚡ Quick Add presets</button>
+      <button class="btn" onclick="closeSettings();openInvestment()">📈 Investment</button>
+      <button class="btn" onclick="closeSettings();openCategories()">🏷 Categories</button>
+      <button class="btn" onclick="closeSettings();openCatBudget()">🎯 Category budgets</button>
+    </div>
+  </div>
+  <div id="settingsTab-data" style="display:none">
+    <div style="display:grid;gap:8px">
+      <button class="btn" onclick="exportJSON()">⬇ Backup JSON</button>
+      <button class="btn" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn" onclick="document.getElementById('file').click()">⬆ Import JSON</button>
+      <button class="btn" onclick="window.print()">🖨 Print / PDF</button>
+      <button class="btn danger" onclick="closeSettings();clearAll()">🗑 Reset all data</button>
+    </div>
+  </div>
+  <div id="settingsTab-display" style="display:none">
+    <div style="display:grid;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--input-bg);border-radius:12px;border:1px solid var(--line)">
+        <div>
+          <div style="font-weight:650">Dark mode</div>
+          <div class="muted">Toggle light / dark theme</div>
+        </div>
+        <button class="btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+      </div>
+      <div class="muted" style="font-size:.8rem">Tip: Long-press a section header to reorder. Tap a header to expand/collapse.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="presetsModal" class="modal" onclick="if(event.target===this)closePresetsModal()">
+<div class="modalbox">
+  <div class="modalhead"><h2>⚡ Edit Quick Add Presets</h2><button class="x" onclick="closePresetsModal()">×</button></div>
+  <p class="muted" style="margin:0 0 12px">I-edit ang one-tap buttons. Default wallet ang gagamitin.</p>
+  <div style="margin-bottom:12px">
+    <label>Default Wallet for Quick Add
+      <select id="defaultWalletSelect"></select>
+    </label>
+  </div>
+  <div id="presetsList"></div>
+  <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
+  <h3 style="margin:0 0 10px">Add New Preset</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <label>Name<input id="pName" placeholder="Hal. Food"></label>
+    <label>Amount (₱)<input id="pAmount" type="number" min="1" step="0.01" placeholder="150"></label>
+    <label>Category<select id="pCategory"></select></label>
+    <label>Icon (emoji)<input id="pIcon" placeholder="🍔" maxlength="4"></label>
+  </div>
+  <div class="form-actions" style="margin-top:12px">
+    <button class="btn" onclick="closePresetsModal()">Close</button>
+    <button class="btn primary" onclick="addPreset()">＋ Add Preset</button>
+  </div>
+</div>
+</div>
+
+<script>
+const KEY = 'walletTrackerV4';
+const DEFAULT_CATS = ['Food','Transportation','Bills','Load/Internet','Shopping','Health','Debt','Entertainment','Salary','Side Income','Other'];
+const wallets = ['Cash','GCash','Maya','Shopee','Other'];
+const DEFAULT_SECTIONS = ['expcharts','quickadd','compare','wallets','investment','calendar','categories','methods','goals','debts','recurring'];
+const DEFAULT_COLLAPSED = {compare:true,investment:true,goals:true,debts:true,recurring:true,categories:true};
+const DEFAULT_DRAWER = [
+  {route:'home', icon:'🏠', label:'Home'},
+  {route:'expcharts', icon:'📊', label:'Biggest expenses'},
+  {route:'quickadd', icon:'⚡', label:'Quick Add'},
+  {route:'compare', icon:'📈', label:'Month compare'},
+  {route:'wallets', icon:'👛', label:'Wallet balances'},
+  {route:'investment', icon:'📉', label:'Investment'},
+  {route:'calendar', icon:'📅', label:'Calendar & day'},
+  {route:'categories', icon:'🏷', label:'Categories & budgets'},
+  {route:'methods', icon:'📬', label:'Budget methods'},
+  {route:'goals', icon:'🎯', label:'Savings goals'},
+  {route:'debts', icon:'💳', label:'Debts / Utang'},
+  {route:'recurring', icon:'🔁', label:'Recurring'}
+];
+const DEFAULT_PRESETS = [
+  {name:'Food', amount:150, category:'Food', icon:'🍔'},
+  {name:'Load', amount:50, category:'Load/Internet', icon:'📱'},
+  {name:'Transport', amount:100, category:'Transportation', icon:'🚌'},
+  {name:'Coffee', amount:80, category:'Food', icon:'☕'},
+  {name:'Grab', amount:200, category:'Transportation', icon:'🚗'},
+  {name:'Snacks', amount:50, category:'Food', icon:'🍟'}
+];
+
+function emptyStarting(){ const o={}; wallets.forEach(w=>o[w]=0); return o; }
+
+const BACKUP_KEY = KEY + '_backup';
+const ROUTE_KEY = KEY + '_route';
+
+function readStoredData(){
+  const keys = [KEY, BACKUP_KEY, 'walletTrackerV3', 'walletTrackerV2', 'walletTrackerV1'];
+  for(const key of keys){
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) continue;
+      const parsed = JSON.parse(raw);
+      if(parsed && typeof parsed === 'object' && Array.isArray(parsed.tx)) return parsed;
+    }catch(e){ console.warn('Ignoring bad storage entry:', key, e); }
+  }
+  return null;
+}
+
+function loadData(){
+  let raw = null;
+  try{ raw = readStoredData(); }
+  catch(e){ console.error('loadData storage error', e); raw = null; }
+  if(!raw) return {
+    starting: emptyStarting(), investment: 0, investNotes: '', budget: 0,
+    catBudgets: {}, categories: [...DEFAULT_CATS], recurring: [], goals: [], debts: [],
+    presets: [...DEFAULT_PRESETS], strictMode: false, defaultWallet: 'Cash', customDailyLimit: 0, weeklyBudget: 0,
+    zbIncome: 0, ruleIncome: 0, catRoles: {}, bufferTarget: 0, bufferCurrent: 0, pyfIncome:0, pyfPct:0, pyfFixed:0, sinkingFunds:[], delay24:[], emergencyTarget:0, emergencyCurrent:0, emergencyMonths:3, prioIncome:0, catPriority:{},
+    tx: [], sectionOrder: [...DEFAULT_SECTIONS], collapsed: {...DEFAULT_COLLAPSED},
+    drawerOrder: DEFAULT_DRAWER.map(d=>d.route)
+  };
+  if(typeof raw.starting === 'number') raw.starting = {Cash: raw.starting||0, GCash:0, Maya:0, Shopee:0, Other:0};
+  const s = emptyStarting(); Object.assign(s, raw.starting||{}); raw.starting = s;
+  if(!Array.isArray(raw.categories) || !raw.categories.length) raw.categories = [...DEFAULT_CATS];
+  if(!raw.catBudgets) raw.catBudgets = {};
+  if(!Array.isArray(raw.recurring)) raw.recurring = [];
+  if(!Array.isArray(raw.goals)) raw.goals = [];
+  if(!Array.isArray(raw.debts)) raw.debts = [];
+  if(!Array.isArray(raw.presets) || !raw.presets.length) raw.presets = [...DEFAULT_PRESETS];
+  if(typeof raw.investment !== 'number') raw.investment = 0;
+  if(!raw.investNotes) raw.investNotes = '';
+  if(typeof raw.strictMode !== 'boolean') raw.strictMode = false;
+  if(!raw.defaultWallet) raw.defaultWallet = 'Cash';
+  if(typeof raw.customDailyLimit !== 'number') raw.customDailyLimit = 0;
+  if(typeof raw.weeklyBudget !== 'number') raw.weeklyBudget = 0;
+  if(typeof raw.zbIncome !== 'number') raw.zbIncome = 0;
+  if(typeof raw.ruleIncome !== 'number') raw.ruleIncome = 0;
+  if(!raw.catRoles || typeof raw.catRoles !== 'object') raw.catRoles = {};
+  if(typeof raw.bufferTarget !== 'number') raw.bufferTarget = 0;
+  if(typeof raw.bufferCurrent !== 'number') raw.bufferCurrent = 0;
+  if(typeof raw.pyfIncome !== 'number') raw.pyfIncome = 0;
+  if(typeof raw.pyfPct !== 'number') raw.pyfPct = 0;
+  if(typeof raw.pyfFixed !== 'number') raw.pyfFixed = 0;
+  if(!Array.isArray(raw.sinkingFunds)) raw.sinkingFunds = [];
+  if(!Array.isArray(raw.delay24)) raw.delay24 = [];
+  if(typeof raw.emergencyTarget !== 'number') raw.emergencyTarget = 0;
+  if(typeof raw.emergencyCurrent !== 'number') raw.emergencyCurrent = 0;
+  if(typeof raw.emergencyMonths !== 'number') raw.emergencyMonths = 3;
+  if(typeof raw.prioIncome !== 'number') raw.prioIncome = 0;
+  if(!raw.catPriority || typeof raw.catPriority !== 'object') raw.catPriority = {};
+  if(!Array.isArray(raw.sectionOrder)) raw.sectionOrder = [...DEFAULT_SECTIONS];
+  DEFAULT_SECTIONS.forEach(s => { if(!raw.sectionOrder.includes(s)) raw.sectionOrder.push(s); });
+  if(!raw.collapsed) raw.collapsed = {};
+  if(!Array.isArray(raw.drawerOrder) || !raw.drawerOrder.length) raw.drawerOrder = DEFAULT_DRAWER.map(d=>d.route);
+  DEFAULT_DRAWER.forEach(d => { if(!raw.drawerOrder.includes(d.route)) raw.drawerOrder.push(d.route); });
+  raw.drawerOrder = raw.drawerOrder.filter(r => r!=='daytx' && DEFAULT_DRAWER.some(d=>d.route===r));
+  if(!Array.isArray(raw.tx)) raw.tx = [];
+  raw.tx.forEach(t => { if(t.wallet==='Bank') t.wallet='Shopee'; if(!t.time) t.time='12:00'; });
+  return raw;
+}
+
+let data = loadData();
+let view = new Date(); view.setDate(1);
+let selectedDate = localDate();
+
+function localDate(d=new Date()){ let y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; }
+function money(n){ return new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP'}).format(n||0); }
+function save(){
+  const payload = JSON.stringify(data);
+  let saved = false;
+  try{ localStorage.setItem(KEY, payload); saved = localStorage.getItem(KEY) === payload; }
+  catch(e){ console.error('primary save failed', e); }
+  try{ localStorage.setItem(BACKUP_KEY, payload); if(localStorage.getItem(BACKUP_KEY) === payload) saved = true; }
+  catch(e){ console.error('backup save failed', e); }
+  if(!saved){
+    console.error('No persistent storage available.');
+    try{ alert('Hindi ma-save ang data ng browser. Huwag munang i-refresh; mag-export ng JSON backup sa Settings → Data.'); }catch(_){}
+  }
+}
+
+function saveRoute(route){
+  try{ localStorage.setItem(ROUTE_KEY, route); }catch(e){}
+}
+function loadSavedRoute(){
+  try{ const saved = localStorage.getItem(ROUTE_KEY); return ROUTES.includes(saved) ? saved : null; }catch(e){ return null; }
+}
+function total(type, list=data.tx){ return list.filter(x=>x.type===type).reduce((a,x)=>a+Number(x.amount),0); }
+function monthTx(){ let p=`${view.getFullYear()}-${String(view.getMonth()+1).padStart(2,'0')}`; return data.tx.filter(x=>x.date.startsWith(p)); }
+function totalStarting(){ return wallets.reduce((s,w)=>s+(Number(data.starting[w])||0),0); }
+
+function walletBalance(w){
+  let bal = Number(data.starting[w])||0;
+  data.tx.forEach(x=>{
+    if(x.type==='income' && x.wallet===w) bal += Number(x.amount);
+    else if(x.type==='expense' && x.wallet===w) bal -= Number(x.amount);
+    else if(x.type==='transfer'){
+      if(x.from===w) bal -= Number(x.amount);
+      if(x.to===w) bal += Number(x.amount);
+    }
+  });
+  return bal;
+}
+
+function toggleTheme(){
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next==='dark'?'dark':'');
+  localStorage.setItem('walletTheme', next);
+  const btn = document.getElementById('themeBtn');
+  if(btn) btn.textContent = next==='dark' ? '☀️ Light' : '🌙 Dark';
+}
+(function(){
+  const saved=localStorage.getItem('walletTheme')||'light';
+  if(saved==='dark'){
+    document.documentElement.setAttribute('data-theme','dark');
+    const btn=document.getElementById('themeBtn');
+    if(btn) btn.textContent='☀️ Light';
+  }
+})();
+
+function openSettings(){ document.getElementById('settingsModal').classList.add('show'); }
+function closeSettings(){ document.getElementById('settingsModal').classList.remove('show'); }
+
+function openDrawer(){
+  renderDrawerNav();
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('navDrawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer(){
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('navDrawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderDrawerNav(){
+  const nav = document.getElementById('drawerNav');
+  if(!nav) return;
+  const meta = Object.fromEntries(DEFAULT_DRAWER.map(d=>[d.route,d]));
+  const order = (data.drawerOrder && data.drawerOrder.length) ? data.drawerOrder : DEFAULT_DRAWER.map(d=>d.route);
+  nav.innerHTML = '';
+  order.forEach(route => {
+    const m = meta[route];
+    if(!m) return;
+    const btn = document.createElement('button');
+    btn.setAttribute('data-route', route);
+    btn.innerHTML = `<span class="dicon">${m.icon}</span> ${m.label}`;
+    btn.onclick = () => {
+      if(window._drawerJustDragged){ window._drawerJustDragged=false; return; }
+      navTo(route);
+    };
+    // long-press reorder handlers
+    btn.addEventListener('mousedown', e => startDrawerLongPress(e, btn));
+    btn.addEventListener('touchstart', e => startDrawerLongPress(e, btn), {passive:true});
+    if(route === currentRoute) btn.classList.add('active');
+    nav.appendChild(btn);
+  });
+}
+
+// Drawer long-press reorder
+(function(){
+  let timer=null, dragging=null, startY=0;
+  function clearT(){ if(timer){ clearTimeout(timer); timer=null; } }
+  window.startDrawerLongPress = function(e, btn){
+    clearT();
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    startY = y;
+    timer = setTimeout(()=>{
+      dragging = btn;
+      btn.classList.add('dragging');
+      if(navigator.vibrate) try{ navigator.vibrate(30); }catch(_){}
+    }, 420);
+  };
+  function onMove(e){
+    if(!timer && !dragging) return;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    if(timer && Math.abs(y-startY)>12){ clearT(); return; }
+    if(!dragging) return;
+    e.preventDefault();
+    const el = document.elementFromPoint(
+      (e.touches?e.touches[0]:e).clientX,
+      (e.touches?e.touches[0]:e).clientY
+    );
+    const target = el && el.closest('#drawerNav button[data-route]');
+    document.querySelectorAll('#drawerNav button.drag-over').forEach(b=>b.classList.remove('drag-over'));
+    if(target && target!==dragging) target.classList.add('drag-over');
+  }
+  function onEnd(e){
+    clearT();
+    if(!dragging) return;
+    const y = (e.changedTouches?e.changedTouches[0]:e).clientY;
+    const x = (e.changedTouches?e.changedTouches[0]:e).clientX;
+    const el = document.elementFromPoint(x,y);
+    const target = el && el.closest('#drawerNav button[data-route]');
+    document.querySelectorAll('#drawerNav button').forEach(b=>{ b.classList.remove('dragging','drag-over'); });
+    if(target && target!==dragging){
+      const from = dragging.getAttribute('data-route');
+      const to = target.getAttribute('data-route');
+      let order = [...(data.drawerOrder||DEFAULT_DRAWER.map(d=>d.route))];
+      const fi = order.indexOf(from), ti = order.indexOf(to);
+      if(fi>=0 && ti>=0){
+        order.splice(fi,1);
+        order.splice(ti,0,from);
+        data.drawerOrder = order;
+        save();
+        window._drawerJustDragged = true;
+        renderDrawerNav();
+      }
+    }
+    dragging = null;
+  }
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, {passive:false});
+  document.addEventListener('mouseup', onEnd);
+  document.addEventListener('touchend', onEnd);
+})();
+
+// ===== Hash-based page router =====
+const ROUTES = ['home','expcharts','quickadd','compare','wallets','investment','calendar','categories','methods','goals','debts','recurring'];
+let currentRoute = 'home';
+
+function getRouteFromHash(){
+  let h = (location.hash || '#/home').replace(/^#\/?/, '').split('?')[0].toLowerCase();
+  if(h === 'daytx') h = 'calendar'; // merged into calendar
+  return ROUTES.includes(h) ? h : 'home';
+}
+function toggleBudgetCollapse(){
+  const body = document.getElementById('budgetCollapseBody');
+  const icon = document.getElementById('budgetCollapseIcon');
+  if(!body) return;
+  const open = body.style.display === 'none' || !body.style.display;
+  // actually currently display:none means collapsed; toggle
+  const isHidden = body.style.display === 'none' || getComputedStyle(body).display === 'none';
+  body.style.display = isHidden ? 'block' : 'none';
+  if(icon) icon.textContent = isHidden ? '▼' : '▶';
+  try{ localStorage.setItem('walletBudgetOpen', isHidden ? '1' : '0'); }catch(e){}
+}
+function restoreBudgetCollapse(){
+  const body = document.getElementById('budgetCollapseBody');
+  const icon = document.getElementById('budgetCollapseIcon');
+  if(!body) return;
+  const open = localStorage.getItem('walletBudgetOpen') === '1';
+  body.style.display = open ? 'block' : 'none';
+  if(icon) icon.textContent = open ? '▼' : '▶';
+}
+
+function applyRoute(route){
+  try{
+    currentRoute = ROUTES.includes(route) ? route : 'home';
+    const home = document.getElementById('page-home');
+    // Toggle section pages only
+    let sectionShown = false;
+    document.querySelectorAll('#sections-container > .section.page').forEach(sec => {
+      const r = sec.getAttribute('data-route');
+      const on = r === currentRoute;
+      sec.classList.toggle('route-active', on);
+      if(on){
+        sectionShown = true;
+        const body = document.getElementById('body-'+r);
+        if(body) body.classList.remove('collapsed');
+      }
+    });
+    // Home visible unless a section route is active
+    if(currentRoute === 'home' || !sectionShown){
+      document.body.classList.remove('viewing-section');
+      currentRoute = 'home';
+    } else {
+      document.body.classList.add('viewing-section');
+    }
+    document.querySelectorAll('#drawerNav button[data-route]').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-route') === currentRoute);
+    });
+    try{ window.scrollTo(0, 0); }catch(e){}
+  }catch(e){
+    console.error('applyRoute', e);
+    document.body.classList.remove('viewing-section');
+  }
+}
+
+function navTo(route){
+  closeDrawer();
+  if(!ROUTES.includes(route)) route = 'home';
+  // Do NOT modify location.hash/history. This keeps the app refresh-safe
+  // when opened from Android Downloads, file://, or a temporary file viewer.
+  saveRoute(route);
+  applyRoute(route);
+}
+
+// Close drawer on Escape
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){ closeDrawer(); closeSettings(); }
+});
+function switchSettingsTab(name, btn){
+  ['actions','data','display'].forEach(t=>{
+    const el=document.getElementById('settingsTab-'+t);
+    if(el) el.style.display = t===name ? '' : 'none';
+  });
+  btn.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+let calSummaryMode = 'day';
+function switchCalSummary(mode, btn){
+  calSummaryMode = mode;
+  if(btn){
+    btn.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  updateCalSummary();
+}
+function updateCalSummary(){
+  const now = new Date();
+  const today = localDate();
+  const day = now.getDay();
+  const diffToMon = day === 0 ? 6 : day - 1;
+  const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - diffToMon);
+  const weekStartStr = localDate(weekStart);
+  const monthPrefix = `${view.getFullYear()}-${String(view.getMonth()+1).padStart(2,'0')}`;
+  const yearPrefix = `${view.getFullYear()}`;
+
+  let list = [], title = '📊 Daily Summary', extra = '';
+  if(calSummaryMode === 'day'){
+    list = data.tx.filter(x => x.date === selectedDate);
+    title = '📊 Daily Summary';
+    extra = selectedDate === today ? 'Selected: Today' : 'Selected: ' + selectedDate;
+  } else if(calSummaryMode === 'week'){
+    list = data.tx.filter(x => x.date >= weekStartStr && x.date <= today);
+    title = '📊 Weekly Summary';
+    extra = weekStartStr + ' → ' + today;
+  } else if(calSummaryMode === 'month'){
+    list = data.tx.filter(x => x.date.startsWith(monthPrefix));
+    title = '📊 Monthly Summary';
+    extra = view.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  } else {
+    list = data.tx.filter(x => x.date.startsWith(yearPrefix));
+    title = '📊 Yearly Summary';
+    extra = 'Year ' + view.getFullYear();
+  }
+  const normal = list.filter(x => x.type !== 'transfer');
+  const mi = total('income', normal);
+  const me = total('expense', normal);
+  document.getElementById('calSummaryTitle').textContent = title;
+  document.getElementById('mIncome').textContent = money(mi);
+  document.getElementById('mExpense').textContent = money(me);
+  document.getElementById('mNet').textContent = money(mi - me);
+  document.getElementById('mCount').textContent = list.length;
+  document.getElementById('calSummaryExtra').textContent = extra;
+}
+
+function applySectionOrder(){
+  const container = document.getElementById('sections-container');
+  data.sectionOrder.forEach(id=>{
+    const el = document.getElementById('sec-'+id);
+    if(el) container.appendChild(el);
+  });
+  data.sectionOrder.forEach(id=>{
+    const collapsed = !!data.collapsed[id];
+    const body = document.getElementById('body-'+id);
+    if(body) body.classList.toggle('collapsed', collapsed);
+  });
+}
+
+function toggleSec(id){
+  // Don't toggle if we just finished a drag
+  if(window._justDragged){ window._justDragged=false; return; }
+  data.collapsed[id] = !data.collapsed[id];
+  save();
+  applySectionOrder();
+}
+
+// ========== LONG-PRESS DRAG TO REORDER SECTIONS ==========
+(function initSectionDrag(){
+  let pressTimer = null;
+  let dragging = null;
+  let startY = 0;
+  let moved = false;
+
+  function getSecId(el){
+    return el?.dataset?.secId || el?.closest?.('.sec-head')?.dataset?.secId;
+  }
+
+  function onStart(e){
+    const head = e.target.closest('.sec-head');
+    if(!head || e.target.closest('.sec-controls')) return;
+    const id = head.dataset.secId;
+    if(!id) return;
+    startY = (e.touches ? e.touches[0].clientY : e.clientY);
+    moved = false;
+    pressTimer = setTimeout(()=>{
+      dragging = document.getElementById('sec-'+id);
+      if(!dragging) return;
+      dragging.classList.add('dragging');
+      if(navigator.vibrate) navigator.vibrate(30);
+      window._justDragged = false;
+    }, 450); // long press ~450ms
+  }
+
+  function onMove(e){
+    if(!pressTimer && !dragging) return;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    if(Math.abs(y - startY) > 12){
+      // Cancel long press if user started scrolling early
+      if(pressTimer){ clearTimeout(pressTimer); pressTimer=null; }
+    }
+    if(!dragging) return;
+    e.preventDefault();
+    moved = true;
+    // Find which section we're over
+    const sections = [...document.querySelectorAll('#sections-container > .section')];
+    sections.forEach(s => s.classList.remove('drag-over'));
+    for(const sec of sections){
+      if(sec === dragging) continue;
+      const rect = sec.getBoundingClientRect();
+      if(y > rect.top && y < rect.bottom){
+        sec.classList.add('drag-over');
+        break;
+      }
+    }
+  }
+
+  function onEnd(e){
+    if(pressTimer){ clearTimeout(pressTimer); pressTimer=null; }
+    if(!dragging) return;
+    const y = (e.changedTouches ? e.changedTouches[0].clientY : e.clientY);
+    const sections = [...document.querySelectorAll('#sections-container > .section')];
+    let targetId = null;
+    for(const sec of sections){
+      if(sec === dragging) continue;
+      const rect = sec.getBoundingClientRect();
+      if(y > rect.top && y < rect.bottom){
+        targetId = sec.dataset.sec;
+        break;
+      }
+    }
+    sections.forEach(s => s.classList.remove('drag-over'));
+    dragging.classList.remove('dragging');
+
+    if(targetId && moved){
+      const fromId = dragging.dataset.sec;
+      const arr = data.sectionOrder;
+      const fromIdx = arr.indexOf(fromId);
+      const toIdx = arr.indexOf(targetId);
+      if(fromIdx >= 0 && toIdx >= 0 && fromIdx !== toIdx){
+        arr.splice(fromIdx, 1);
+        arr.splice(toIdx, 0, fromId);
+        save();
+        applySectionOrder();
+      }
+      window._justDragged = true;
+    }
+    dragging = null;
+  }
+
+  document.addEventListener('mousedown', onStart);
+  document.addEventListener('touchstart', onStart, {passive:true});
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, {passive:false});
+  document.addEventListener('mouseup', onEnd);
+  document.addEventListener('touchend', onEnd);
+})();
+
+function daysLeftInMonth(){
+  const now = new Date();
+  const last = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+  return Math.max(1, last - now.getDate() + 1);
+}
+function daysPassedInMonth(){
+  return Math.max(1, new Date().getDate());
+}
+function daysInMonth(){
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+}
+
+function totalDebtsRemaining(){
+  return (data.debts||[]).reduce((s,d)=>s+(Number(d.remaining)||0),0);
+}
+
+function saveCustomDaily(){
+  const v = Number(document.getElementById('customDailyInput').value);
+  data.customDailyLimit = v > 0 ? v : 0;
+  save();
+  render();
+}
+function clearCustomDaily(){
+  data.customDailyLimit = 0;
+  document.getElementById('customDailyInput').value = '';
+  save();
+  render();
+}
+
+function render(){
+  if(!document.getElementById('balance')) return;
+  const inc = total('income');
+  const exp = total('expense');
+  const mt = monthTx();
+  const mi = total('income', mt);
+  const me = total('expense', mt);
+  const overall = totalStarting() + inc - exp;
+  // Net Worth = wallets + investment only (debts are tracked separately, not deducted)
+  const netWorth = overall + (data.investment||0);
+  const daysLeft = daysLeftInMonth();
+  const daysPassed = daysPassedInMonth();
+  const totalDays = daysInMonth();
+  const remainingBudget = data.budget ? Math.max(0, data.budget - me) : 0;
+
+  // ===== DAILY LIMIT: per-day record (resets every calendar day) =====
+  // Only expenses with date === TODAY count. Yesterday's spending does NOT carry over.
+  const todayStr = localDate(); // always real today (YYYY-MM-DD local)
+  const todaySpent = data.tx
+    .filter(x => x.type === 'expense' && x.date === todayStr)
+    .reduce((s, x) => s + Number(x.amount), 0);
+
+  // Auto daily limit from remaining monthly budget
+  const autoDailyLimit = data.budget ? remainingBudget / daysLeft : 0;
+  // Custom overrides auto when set
+  const effectiveDaily = (data.customDailyLimit > 0) ? data.customDailyLimit : autoDailyLimit;
+  // Fresh each day: Limit − today's expenses only
+  const todayRemaining = effectiveDaily - todaySpent;
+  const overToday = effectiveDaily > 0 && todaySpent > effectiveDaily;
+  const safeSpend = remainingBudget;
+
+  // Selected calendar day (for day panel) — own record per day
+  const selSpent = data.tx
+    .filter(x => x.type === 'expense' && x.date === selectedDate)
+    .reduce((s, x) => s + Number(x.amount), 0);
+  const selRemaining = effectiveDaily - selSpent;
+  const overSelected = effectiveDaily > 0 && selSpent > effectiveDaily;
+
+  // Formulas
+  const avgDaily = me / daysPassed;
+  const projectedEnd = avgDaily * totalDays;
+  const savingsRate = mi > 0 ? ((mi - me) / mi * 100) : 0;
+  const runwayDays = avgDaily > 0 ? Math.floor(overall / avgDaily) : null;
+
+  // Top cards
+  document.getElementById('balance').textContent = money(overall);
+  document.getElementById('netWorth').textContent = money(netWorth);
+  document.getElementById('net').textContent = money(mi-me);
+  document.getElementById('mExpenseTop').textContent = money(me);
+  document.getElementById('safeSpend').textContent = data.budget ? money(safeSpend) : '—';
+
+  // Today Remaining card (limit minus today's expenses)
+  const hasDaily = data.budget || data.customDailyLimit > 0;
+  document.getElementById('dailyLimit').textContent = hasDaily ? money(todayRemaining) : '—';
+  document.getElementById('dailyLimitSub').textContent = hasDaily
+    ? `Today only: ${money(todaySpent)} spent / ${money(effectiveDaily)} limit · next day starts fresh`
+    : 'Set budget or custom limit';
+
+  // Color coding
+  const safeEl = document.getElementById('safeSpend');
+  const dailyEl = document.getElementById('dailyLimit');
+  const overBudget = data.budget && me > data.budget;
+  safeEl.className = 'balance ' + (data.budget ? (overBudget ? 'expense' : 'safe') : '');
+  dailyEl.className = 'balance ' + (overToday ? 'expense' : (hasDaily ? 'safe' : ''));
+  if(overToday) document.getElementById('dailyCard').style.borderColor = 'var(--red)';
+  else document.getElementById('dailyCard').style.borderColor = '';
+
+  // Formula stats
+  document.getElementById('avgDaily').textContent = money(avgDaily);
+  document.getElementById('avgDaily').className = 'balance' + (avgDaily > effectiveDaily && effectiveDaily > 0 ? ' expense' : '');
+  document.getElementById('projectedEnd').textContent = money(projectedEnd);
+  document.getElementById('projectedEnd').className = 'balance' + (data.budget && projectedEnd > data.budget ? ' expense' : '');
+  document.getElementById('savingsRate').textContent = (savingsRate >= 0 ? savingsRate.toFixed(1) : '0') + '%';
+  document.getElementById('savingsRate').className = 'balance ' + (savingsRate >= 20 ? 'safe' : savingsRate >= 0 ? 'net' : 'expense');
+  document.getElementById('moneyRunway').textContent = runwayDays !== null ? (runwayDays + ' days') : '—';
+  document.getElementById('moneyRunway').className = 'balance ' + (runwayDays !== null && runwayDays < 15 ? 'expense' : runwayDays !== null && runwayDays < 30 ? 'warn' : 'safe');
+
+  // Custom daily UI
+  document.getElementById('customDailyInput').value = data.customDailyLimit > 0 ? data.customDailyLimit : '';
+  document.getElementById('customDailyLabel').textContent = data.customDailyLimit > 0
+    ? `Active: ${money(data.customDailyLimit)}/day`
+    : (data.budget ? `Auto: ${money(autoDailyLimit)}/day` : 'Walang limit');
+
+  // Strict mode UI
+  document.getElementById('strictMode').checked = !!data.strictMode;
+  document.getElementById('strictBadge').style.display = data.strictMode ? 'inline' : 'none';
+  document.getElementById('budgetControlCard').classList.toggle('strict-on', !!data.strictMode);
+
+  // Budget status + daily info
+  if(data.budget || data.customDailyLimit > 0){
+    const pct = data.budget ? Math.round(me / data.budget * 100) : 0;
+    document.getElementById('budgetStatusText').textContent = data.budget
+      ? `${money(me)} / ${money(data.budget)} (${pct}%) · ${daysLeft} day${daysLeft>1?'s':''} left`
+      : `Custom Daily Limit: ${money(data.customDailyLimit)}`;
+
+    let info = `Today: spent <b class="${overToday?'expense':''}">${money(todaySpent)}</b> · remaining <b class="${overToday?'expense':'safe'}">${money(todayRemaining)}</b> (limit ${money(effectiveDaily)})`;
+    if(overToday) info += `<br><b class="expense">⚠️ SOBRA KA NA SA DAILY LIMIT ngayong araw!</b>`;
+    if(data.budget && me > data.budget) info += `<br><b class="expense">⚠️ OVER MONTHLY BUDGET by ${money(me - data.budget)}</b>`;
+    document.getElementById('dailyInfo').innerHTML = info;
+  } else {
+    document.getElementById('budgetStatusText').textContent = 'Set monthly budget o custom daily limit para umandar ang tracking';
+    document.getElementById('dailyInfo').textContent = '';
+  }
+
+  // Alert bar — prioritize today overspend, then monthly
+  const alert = document.getElementById('budgetAlert');
+  alert.className = 'alert-bar';
+  if(overToday){
+    alert.className = 'alert-bar show danger';
+    alert.textContent = `🚨 SOBRA SA DAILY LIMIT! Nagastos mo na ${money(todaySpent)} ngayong araw (limit: ${money(effectiveDaily)}). Sobra: ${money(todaySpent - effectiveDaily)}`;
+  } else if(data.budget && me > data.budget){
+    alert.className = 'alert-bar show danger';
+    alert.textContent = `🚨 OVER BUDGET! Nakalamang ka na ng ${money(me - data.budget)}. ${data.strictMode ? 'STRICT MODE ON.' : ''}`;
+  } else if(data.budget && (me / data.budget * 100) >= 80){
+    alert.className = 'alert-bar show warning';
+    alert.textContent = `⚠️ ${Math.round(me / data.budget * 100)}% na ng monthly budget. Today remaining: ${money(todayRemaining)}`;
+  } else if(hasDaily && todaySpent >= effectiveDaily * 0.8 && !overToday){
+    alert.className = 'alert-bar show warning';
+    alert.textContent = `⚠️ Malapit ka na sa daily limit. Spent today: ${money(todaySpent)} / ${money(effectiveDaily)} · Remaining: ${money(todayRemaining)}`;
+  }
+
+  // Calendar title + period summary (day/week/month/year)
+  document.getElementById('monthTitle').textContent = view.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  updateCalSummary();
+
+  document.getElementById('budgetInput').value = data.budget||'';
+  const pctBar = data.budget ? Math.min(100, me/data.budget*100) : 0;
+  document.getElementById('budgetText').textContent = data.budget ? `${money(me)} / ${money(data.budget)} (${Math.round(me/data.budget*100)}%)` : 'Walang monthly budget set.';
+  document.getElementById('budgetBar').style.width = pctBar+'%';
+  document.getElementById('budgetProgress').classList.toggle('over', data.budget && me > data.budget);
+
+  // Weekly budget progress (Mon–today / this calendar week)
+  const nowW = new Date();
+  const dow = nowW.getDay();
+  const monOffset = dow === 0 ? 6 : dow - 1;
+  const weekStartD = new Date(nowW.getFullYear(), nowW.getMonth(), nowW.getDate() - monOffset);
+  const weekStartS = localDate(weekStartD);
+  const todayS = localDate();
+  const weekExp = data.tx.filter(x => x.type==='expense' && x.date >= weekStartS && x.date <= todayS)
+    .reduce((s,x)=>s+Number(x.amount),0);
+  const wbEl = document.getElementById('weeklyBudgetInput');
+  if(wbEl){
+    wbEl.value = data.weeklyBudget > 0 ? data.weeklyBudget : '';
+    const wPct = data.weeklyBudget ? Math.min(100, weekExp/data.weeklyBudget*100) : 0;
+    document.getElementById('weeklyBudgetText').textContent = data.weeklyBudget
+      ? `${money(weekExp)} / ${money(data.weeklyBudget)} (${Math.round(weekExp/data.weeklyBudget*100)}%)`
+      : 'Walang weekly budget set.';
+    document.getElementById('weeklyBudgetBar').style.width = wPct+'%';
+    document.getElementById('weeklyBudgetProgress').classList.toggle('over', data.weeklyBudget && weekExp > data.weeklyBudget);
+  }
+
+  // Daily budget progress (today) — uses customDailyLimit
+  const dbEl = document.getElementById('dailyBudgetInput');
+  if(dbEl){
+    dbEl.value = data.customDailyLimit > 0 ? data.customDailyLimit : '';
+    const dPct = data.customDailyLimit ? Math.min(100, todaySpent/data.customDailyLimit*100) : 0;
+    document.getElementById('dailyBudgetText').textContent = data.customDailyLimit
+      ? `${money(todaySpent)} / ${money(data.customDailyLimit)} (${Math.round(todaySpent/data.customDailyLimit*100)}%)`
+      : 'Walang daily budget set.';
+    document.getElementById('dailyBudgetBar').style.width = dPct+'%';
+    document.getElementById('dailyBudgetProgress').classList.toggle('over', data.customDailyLimit && todaySpent > data.customDailyLimit);
+  }
+
+  renderTodaySpendList();
+  renderBudgetMethods();
+
+  document.getElementById('investBal').textContent = money(data.investment);
+  document.getElementById('investNote').textContent = data.investNotes || '';
+
+  const fw = document.getElementById('filterWallet');
+  if(fw){
+    const cur = fw.value;
+    fw.innerHTML = '<option value="">All Wallets</option>' + wallets.map(w=>`<option value="${w}">${w}</option>`).join('');
+    fw.value = cur;
+  }
+
+  renderQuickAdd();
+  renderCompare();
+  renderExpenseCharts();
+  renderWallets();
+  renderCalendar();
+  renderDay();
+  restoreBudgetCollapse();
+  renderCategories();
+  renderCatBudgets();
+  renderGoals();
+  renderDebts();
+  renderRecurring();
+  applySectionOrder();
+}
+
+function categorySums(list){
+  const sums = {};
+  list.filter(x => x.type === 'expense').forEach(x => {
+    sums[x.category] = (sums[x.category] || 0) + Number(x.amount);
+  });
+  return Object.entries(sums).sort((a,b) => b[1] - a[1]);
+}
+
+// Which biggest-expense panels are expanded (UI only)
+if(typeof window._expOpen === 'undefined'){
+  window._expOpen = { today:true, week:false, month:false, year:false };
+}
+
+function toggleExpPanel(key){
+  window._expOpen[key] = !window._expOpen[key];
+  renderExpenseCharts();
+}
+
+function renderExpenseCharts(){
+  const el = document.getElementById('expenseCharts');
+  if(!el) return;
+  const now = new Date();
+  const today = localDate();
+  const day = now.getDay();
+  const diffToMon = day === 0 ? 6 : day - 1;
+  const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - diffToMon);
+  const weekStartStr = localDate(weekStart);
+  const monthPrefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const yearPrefix = `${now.getFullYear()}`;
+
+  const periods = [
+    { key: 'today', label: 'Today', list: data.tx.filter(x => x.date === today) },
+    { key: 'week', label: 'This week', list: data.tx.filter(x => x.date >= weekStartStr && x.date <= today) },
+    { key: 'month', label: 'This month', list: data.tx.filter(x => x.date.startsWith(monthPrefix)) },
+    { key: 'year', label: 'This year', list: data.tx.filter(x => x.date.startsWith(yearPrefix)) }
+  ];
+
+  el.innerHTML = '';
+  el.style.display = 'flex';
+  el.style.flexDirection = 'column';
+  el.style.gap = '8px';
+
+  periods.forEach(p => {
+    const arr = categorySums(p.list);
+    const open = !!window._expOpen[p.key];
+    const totalAmt = arr.reduce((s,[,v]) => s+v, 0);
+    const top = arr[0];
+    const wrap = document.createElement('div');
+    wrap.className = 'exp-chart-card';
+    wrap.style.cursor = 'pointer';
+
+    let body = '';
+    if(!arr.length){
+      body = open ? `<div class="muted" style="padding:6px 0">No expenses yet</div>` : '';
+    } else {
+      const max = top[1] || 1;
+      const bars = arr.slice(0, 6).map(([c,v]) => {
+        const w = Math.min(100, (v / max) * 100);
+        return `<div class="exp-mini-row"><span>${esc(c)}</span><div class="exp-mini-bar"><div style="width:${w}%"></div></div><span style="text-align:right;font-variant-numeric:tabular-nums;font-weight:600">${money(v)}</span></div>`;
+      }).join('');
+      body = open ? `
+        <div class="top-name">🏆 ${esc(top[0])}</div>
+        <div class="top-amt">${money(top[1])}</div>
+        <div class="muted" style="font-size:.72rem;margin-top:2px">Total: ${money(totalAmt)}</div>
+        <div class="exp-mini-bars">${bars}</div>` : '';
+    }
+
+    const summaryRight = top ? money(top[1]) : '—';
+    wrap.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px" onclick="toggleExpPanel('${p.key}')">
+        <h4 style="margin:0">${open?'▼':'▶'} ${p.label}${top ? ' · '+esc(top[0]) : ''}</h4>
+        <span style="font-weight:700;color:var(--red);font-variant-numeric:tabular-nums;font-size:.9rem">${summaryRight}</span>
+      </div>
+      ${body}`;
+    el.appendChild(wrap);
+  });
+}
+
+// Scroll-to-top visibility
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('scrollTopBtn');
+  if(btn) btn.classList.toggle('show', window.scrollY > 400);
+}, {passive:true});
+
+function toggleStrict(){
+  data.strictMode = document.getElementById('strictMode').checked;
+  save();
+  render();
+}
+
+
+// ===== Budget Methods: Envelope / Zero-based / 50-30-20 =====
+
+// ===== Budget Methods (12 systems) =====
+const BUDGET_METHODS = [
+  {id:'rule', icon:'📊', name:'50/30/20 Rule'},
+  {id:'zero', icon:'🔢', name:'Zero-Based Budget'},
+  {id:'pyf', icon:'💵', name:'Pay Yourself First'},
+  {id:'envelope', icon:'📬', name:'Envelope System'},
+  {id:'weekly', icon:'📅', name:'Weekly Budget'},
+  {id:'daily', icon:'⏱', name:'Daily Spending Limit'},
+  {id:'sinking', icon:'🎯', name:'Sinking Fund'},
+  {id:'emergency', icon:'🛡️', name:'Emergency Fund'},
+  {id:'nwg', icon:'⚖️', name:'Needs–Wants–Goals'},
+  {id:'delay24', icon:'⏳', name:'24-Hour Rule'},
+  {id:'rolling', icon:'🔄', name:'Rolling Budget'},
+  {id:'priority', icon:'🏆', name:'Priority-Based Budget'}
+];
+
+const METHOD_HELP = {
+  rule: {title:'📊 50/30/20 Rule', body:`<p><b>Ano ito?</b> Hatiin ang income: <b>50% Needs</b>, <b>30% Wants</b>, <b>20% Savings/Debt</b>.</p>
+    <ol style="padding-left:18px"><li>I-set ang monthly income.</li><li>I-classify ang categories bilang Need / Want / Save.</li><li>I-compare ang actual spending vs targets.</li><li>Optional: mag-set ng Buffer fund para sa sorpresa.</li></ol>
+    <p class="muted">Best for: unang beses mag-budget, simpleng guidelines.</p>`},
+  zero: {title:'🔢 Zero-Based Budget', body:`<p><b>Ano ito?</b> Bawat piso ng income may “trabaho”. Target: <b>Income − Allocations = ₱0</b>.</p>
+    <ol style="padding-left:18px"><li>I-set ang planned monthly income.</li><li>I-allocate sa category budgets + buffer hanggang zero leftover.</li><li>Kung may sobra → dagdag savings. Kung kulang → bawasan ang wants.</li></ol>
+    <p class="muted">Best for: strict control, walang “di ko alam saan napunta”.</p>`},
+  pyf: {title:'💵 Pay Yourself First', body:`<p><b>Ano ito?</b> Unahin ang <b>ipon</b> bago gumastos. Savings muna, gastos later.</p>
+    <ol style="padding-left:18px"><li>I-set ang income.</li><li>Pumili ng % (hal. 20%) o fixed amount (hal. ₱5,000).</li><li>Ang mas mataas ang gagamitin bilang “bayad sa sarili”.</li><li>Spendable = Income − Savings.</li></ol>
+    <p class="muted">Best for: automatic prioritization ng goals.</p>`},
+  envelope: {title:'📬 Envelope System', body:`<p><b>Ano ito?</b> Bawat category = envelope na may fixed na pera. Kapag ubos, stop.</p>
+    <ol style="padding-left:18px"><li>Mag-set ng amount per category (envelope).</li><li>Optional: Fill evenly mula sa income.</li><li>I-log ang gastos sa tamang category.</li><li>Huwag “manghiram” sa ibang envelope kung possible.</li></ol>
+    <p class="muted">Best for: control sa overspending per category.</p>`},
+  weekly: {title:'📅 Weekly Budget', body:`<p><b>Ano ito?</b> Mag-set ng limit para sa <b>isang linggo</b> (Lunes–Linggo), hindi buong buwan lang.</p>
+    <ol style="padding-left:18px"><li>I-set ang weekly budget amount.</li><li>I-track ang gastos mula Lunes hanggang ngayon.</li><li>Kapag malapit na sa limit, bawasan ang discretionary spend.</li></ol>
+    <p class="muted">Best for: weekly allowance / sahod na weekly.</p>`},
+  daily: {title:'⏱ Daily Spending Limit', body:`<p><b>Ano ito?</b> Max na pwede gastusin <b>bawat araw</b>. Reset araw-araw.</p>
+    <ol style="padding-left:18px"><li>I-set ang daily limit (o auto mula sa monthly remaining ÷ days left).</li><li>Bawat expense ngayong araw ay bumabawas sa Today Remaining.</li><li>Kapag sobra → warning / Strict Mode confirm.</li></ol>
+    <p class="muted">Best for: daily discipline at impulse control.</p>`},
+  sinking: {title:'🎯 Sinking Fund', body:`<p><b>Ano ito?</b> Mag-ipon ng unti-unti para sa <b>alam na malaking gastos</b> (regalo, gulong, tuition, bakasyon).</p>
+    <ol style="padding-left:18px"><li>Gumawa ng fund (pangalan + target amount).</li><li>Magdagdag ng konti bawat payday.</li><li>Kapag kumpleto, gastusin para sa purpose na iyon — hindi emergency.</li></ol>
+    <p class="muted">Best for: planned big purchases nang hindi nasira ang monthly budget.</p>`},
+  emergency: {title:'🛡️ Emergency Fund System', body:`<p><b>Ano ito?</b> Pondong <b>emergency only</b> — job loss, medical, big unexpected bills. Hindi pang-shopping.</p>
+    <ol style="padding-left:18px"><li>I-set ang target (hal. 3–6 months ng essentials).</li><li>I-update ang current amount.</li><li>Gamitin lang sa totooong emergency; palitan ulit pag nagamit.</li></ol>
+    <p class="muted">Best for: peace of mind at financial safety net.</p>`},
+  nwg: {title:'⚖️ Needs–Wants–Goals', body:`<p><b>Ano ito?</b> Simpleng 3 bucket: <b>Needs</b> (kailangan), <b>Wants</b> (gusto), <b>Goals</b> (ipon/utang/goals).</p>
+    <ol style="padding-left:18px"><li>I-assign ang bawat category sa Need / Want / Goal.</li><li>Tingnan ang actual spending split.</li><li>I-adjust kung sobra ang Wants vs Goals.</li></ol>
+    <p class="muted">Best for: mas flexible kaysa strict 50/30/20 percentages.</p>`},
+  delay24: {title:'⏳ 24-Hour Rule', body:`<p><b>Ano ito?</b> Bago bumili ng non-essential, <b>maghintay ng 24 oras</b>. Madalas mawala ang impulse.</p>
+    <ol style="padding-left:18px"><li>I-add ang item sa wishlist (amount + name).</li><li>Hintayin ang 24 hours.</li><li>Pagkatapos: bilhin, i-skip, o palawigin.</li></ol>
+    <p class="muted">Best for: impulse buying (online carts, “add to cart”).</p>`},
+  rolling: {title:'🔄 Rolling Budget', body:`<p><b>Ano ito?</b> Ang <b>hindi nagamit</b> mula sa budget ay <b>nadadala</b> sa next period (hindi “use it or lose it”).</p>
+    <ol style="padding-left:18px"><li>I-set ang monthly budget.</li><li>Kung under-budget ang last month, ang sobra ay rolling balance.</li><li>Available ngayong buwan ≈ Budget + rolled leftover.</li></ol>
+    <p class="muted">Best for: hindi mapilitang gastusin ang natitira “para lang maubos”.</p>`},
+  priority: {title:'🏆 Priority-Based Budget', body:`<p><b>Ano ito?</b> I-rank ang categories ayon sa <b>priority</b>. Una munang mapondohan ang pinakamahalaga hanggang maubos ang income.</p>
+    <ol style="padding-left:18px"><li>I-rank ang categories (1 = highest).</li><li>I-set ang planned income.</li><li>I-allocate mula sa #1 pababa hanggang maubos ang pera.</li><li>Ang mababa ang rank ay puwedeng ma-cut.</li></ol>
+    <p class="muted">Best for: kapag mahigpit ang pera — essentials muna.</p>`}
+};
+
+let activeMethod = localStorage.getItem('walletActiveMethod') || 'rule';
+
+function switchMethodTab(id){
+  activeMethod = id;
+  localStorage.setItem('walletActiveMethod', id);
+  renderBudgetMethods();
+}
+
+function showMethodHelp(key){
+  const h = METHOD_HELP[key];
+  if(!h) return;
+  document.getElementById('methodHelpTitle').textContent = h.title;
+  document.getElementById('methodHelpBody').innerHTML = h.body;
+  document.getElementById('methodHelpModal').classList.add('show');
+}
+function closeMethodHelp(){ document.getElementById('methodHelpModal').classList.remove('show'); }
+
+function renderBudgetMethods(){
+  const picker = document.getElementById('methodPicker');
+  const panels = document.getElementById('methodPanels');
+  if(!picker || !panels) return;
+  if(!BUDGET_METHODS.find(m=>m.id===activeMethod)) activeMethod = 'rule';
+
+  picker.innerHTML = BUDGET_METHODS.map(m =>
+    `<button class="${m.id===activeMethod?'active':''}" onclick="switchMethodTab('${m.id}')">${m.icon} ${m.name}</button>`
+  ).join('');
+
+  const m = BUDGET_METHODS.find(x=>x.id===activeMethod);
+  let body = '';
+  try {
+    if(activeMethod==='envelope') body = htmlEnvelope();
+    else if(activeMethod==='zero') body = htmlZero();
+    else if(activeMethod==='rule') body = htmlRule();
+    else if(activeMethod==='pyf') body = htmlPyf();
+    else if(activeMethod==='weekly') body = htmlWeekly();
+    else if(activeMethod==='daily') body = htmlDailyMethod();
+    else if(activeMethod==='sinking') body = htmlSinking();
+    else if(activeMethod==='emergency') body = htmlEmergency();
+    else if(activeMethod==='nwg') body = htmlNwg();
+    else if(activeMethod==='delay24') body = htmlDelay24();
+    else if(activeMethod==='rolling') body = htmlRolling();
+    else if(activeMethod==='priority') body = htmlPriority();
+  } catch(err){ body = '<div class="muted">Error loading method.</div>'; console.error(err); }
+
+  panels.innerHTML = `
+    <div class="method-panel-head">
+      <h3>${m.icon} ${m.name}</h3>
+      <button class="btn small help-btn" onclick="showMethodHelp('${m.id}')" title="Explanation">?</button>
+    </div>
+    <p class="method-desc">${(METHOD_HELP[m.id]||{}).body ? '' : ''}</p>
+    ${body}`;
+  // short one-liner from help first sentence
+  const short = (METHOD_HELP[m.id]?.body||'').match(/<p><b>Ano ito\?<\/b>\s*([^<]+)/);
+  if(short){
+    const desc = panels.querySelector('.method-desc');
+    if(desc) desc.textContent = short[1].trim();
+  }
+
+  // bind dynamic lists after innerHTML
+  if(activeMethod==='envelope') bindEnvelope();
+  if(activeMethod==='zero') bindZero();
+  if(activeMethod==='rule') bindRule();
+  if(activeMethod==='pyf') bindPyf();
+  if(activeMethod==='sinking') bindSinking();
+  if(activeMethod==='emergency') bindEmergency();
+  if(activeMethod==='nwg') bindNwg();
+  if(activeMethod==='delay24') bindDelay24();
+  if(activeMethod==='priority') bindPriority();
+  if(activeMethod==='weekly') bindWeekly();
+  if(activeMethod==='daily') bindDailyMethod();
+  if(activeMethod==='rolling') bindRolling();
+}
+
+function monthExpenseByCat(){
+  const mt=monthTx().filter(x=>x.type==='expense');
+  const spent={};
+  mt.forEach(x=>spent[x.category]=(spent[x.category]||0)+Number(x.amount));
+  return spent;
+}
+
+// --- HTML builders ---
+function htmlEnvelope(){
+  return `<div class="actions" style="margin:0 0 12px">
+    <input id="envIncomeInput" type="number" min="0" step="0.01" placeholder="Income to fill (₱)" style="margin:0;max-width:160px">
+    <button class="btn primary" onclick="fillEnvelopesEvenly()">Fill evenly</button>
+    <button class="btn" onclick="openCatBudget()">＋ Edit envelope</button>
+  </div>
+  <div id="envelopeSummary" class="muted" style="margin-bottom:10px"></div>
+  <div id="envelopeList"></div>`;
+}
+function bindEnvelope(){ renderEnvelopes(); }
+
+function htmlZero(){
+  return `<div class="actions" style="margin:0 0 12px">
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--text)">Planned income
+      <input id="zbIncomeInput" type="number" min="0" step="0.01" placeholder="₱" style="margin:0;max-width:140px">
+    </label>
+    <button class="btn primary" onclick="saveZbIncome()">Save</button>
+    <button class="btn" onclick="openCatBudget()">＋ Allocations</button>
+  </div>
+  <div id="zbStatus" style="padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--input-bg);margin-bottom:12px"></div>
+  <div id="zbList"></div>`;
+}
+function bindZero(){ renderZeroBased(); }
+
+function htmlRule(){
+  return `<div class="actions" style="margin:0 0 12px">
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--text)">Monthly income
+      <input id="ruleIncomeInput" type="number" min="0" step="0.01" placeholder="₱" style="margin:0;max-width:140px">
+    </label>
+    <button class="btn primary" onclick="saveRuleIncome()">Save</button>
+  </div>
+  <div id="ruleBars" style="margin-bottom:14px"></div>
+  <h3 style="margin:0 0 8px">Category roles</h3>
+  <div id="ruleCatList"></div>
+  <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
+  <h3 style="margin:0 0 8px">🛡️ Buffer fund</h3>
+  <div class="actions" style="margin:0 0 8px">
+    <input id="bufferTargetInput" type="number" min="0" step="0.01" placeholder="Target ₱" style="margin:0;max-width:120px">
+    <input id="bufferCurrentInput" type="number" min="0" step="0.01" placeholder="Current ₱" style="margin:0;max-width:120px">
+    <button class="btn primary" onclick="saveBufferFund()">Save buffer</button>
+  </div>
+  <div id="bufferStatus"></div>`;
+}
+function bindRule(){ renderRule503020(); }
+
+function htmlPyf(){
+  return `<div class="actions" style="margin:0 0 12px;flex-wrap:wrap">
+    <label style="display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--text)">Income
+      <input id="pyfIncomeInput" type="number" min="0" step="0.01" style="margin:0;max-width:120px">
+    </label>
+    <label style="display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--text)">Save %
+      <input id="pyfPctInput" type="number" min="0" max="100" step="1" style="margin:0;max-width:80px">
+    </label>
+    <label style="display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--text)">Fixed ₱
+      <input id="pyfFixedInput" type="number" min="0" step="0.01" style="margin:0;max-width:120px">
+    </label>
+    <button class="btn primary" onclick="savePyf()">Save</button>
+  </div>
+  <div id="pyfStatus" style="padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--input-bg)"></div>`;
+}
+function bindPyf(){ renderPyf(); }
+
+function htmlWeekly(){
+  return `<div class="actions" style="margin:0 0 12px">
+    <input id="methodWeeklyInput" type="number" min="0" step="0.01" placeholder="Weekly budget ₱" style="margin:0;max-width:160px">
+    <button class="btn primary" onclick="saveMethodWeekly()">Save weekly budget</button>
+  </div>
+  <div id="methodWeeklyStatus"></div>`;
+}
+function bindWeekly(){
+  const inp=document.getElementById('methodWeeklyInput');
+  const st=document.getElementById('methodWeeklyStatus');
+  if(inp) inp.value=data.weeklyBudget>0?data.weeklyBudget:'';
+  const now=new Date(); const dow=now.getDay(); const off=dow===0?6:dow-1;
+  const ws=localDate(new Date(now.getFullYear(),now.getMonth(),now.getDate()-off));
+  const today=localDate();
+  const spent=data.tx.filter(x=>x.type==='expense'&&x.date>=ws&&x.date<=today).reduce((s,x)=>s+Number(x.amount),0);
+  const bud=data.weeklyBudget||0;
+  const pct=bud?Math.min(100,spent/bud*100):0;
+  if(st) st.innerHTML = bud<=0 ? '<div class="muted">I-set ang weekly budget.</div>' :
+    `<div class="budget-item"><div class="budget-head"><span>This week (${ws} → ${today})</span>
+      <span><b class="${spent>bud?'expense':''}">${money(spent)}</b> / ${money(bud)} (${Math.round(spent/bud*100)}%)</span></div>
+      <div class="progress ${spent>bud?'over':''}"><div style="width:${pct}%"></div></div>
+      <div class="muted" style="margin-top:6px">${spent>bud?'Sobra: '+money(spent-bud):'Natitira: '+money(bud-spent)}</div></div>`;
+}
+function saveMethodWeekly(){
+  data.weeklyBudget=Number(document.getElementById('methodWeeklyInput').value)||0;
+  save(); render();
+}
+
+function htmlDailyMethod(){
+  return `<div class="actions" style="margin:0 0 12px">
+    <input id="methodDailyInput" type="number" min="0" step="0.01" placeholder="Daily limit ₱" style="margin:0;max-width:160px">
+    <button class="btn primary" onclick="saveMethodDaily()">Save daily limit</button>
+  </div>
+  <div id="methodDailyStatus"></div>`;
+}
+function bindDailyMethod(){
+  const inp=document.getElementById('methodDailyInput');
+  const st=document.getElementById('methodDailyStatus');
+  if(inp) inp.value=data.customDailyLimit>0?data.customDailyLimit:'';
+  const today=localDate();
+  const spent=data.tx.filter(x=>x.type==='expense'&&x.date===today).reduce((s,x)=>s+Number(x.amount),0);
+  const lim=data.customDailyLimit||0;
+  const rem=lim-spent;
+  const pct=lim?Math.min(100,spent/lim*100):0;
+  if(st) st.innerHTML = lim<=0 ? '<div class="muted">I-set ang daily spending limit. (Sync sa Home Today Remaining)</div>' :
+    `<div class="budget-item"><div class="budget-head"><span>Today</span>
+      <span><b class="${spent>lim?'expense':'safe'}">${money(spent)}</b> / ${money(lim)} · left <b class="${rem<0?'expense':'safe'}">${money(rem)}</b></span></div>
+      <div class="progress ${spent>lim?'over':''}"><div style="width:${pct}%"></div></div></div>`;
+}
+function saveMethodDaily(){
+  data.customDailyLimit=Number(document.getElementById('methodDailyInput').value)||0;
+  save(); render();
+}
+
+function htmlSinking(){
+  return `<div class="actions" style="margin:0 0 12px;flex-wrap:wrap">
+    <input id="sinkName" placeholder="Fund name" style="margin:0;max-width:140px">
+    <input id="sinkTarget" type="number" min="0" step="0.01" placeholder="Target ₱" style="margin:0;max-width:120px">
+    <input id="sinkCurrent" type="number" min="0" step="0.01" placeholder="Current ₱" style="margin:0;max-width:120px">
+    <button class="btn primary" onclick="addSinkingFund()">＋ Add fund</button>
+  </div>
+  <div id="sinkingList"></div>`;
+}
+function bindSinking(){
+  const el=document.getElementById('sinkingList');
+  if(!el) return;
+  const funds=data.sinkingFunds||[];
+  if(!funds.length){ el.innerHTML='<div class="emptymsg">Walang sinking fund pa. Hal: “Bagong gulong”, “Christmas gifts”.</div>'; return; }
+  el.innerHTML='';
+  funds.forEach(f=>{
+    const pct=f.target>0?Math.min(100,(f.current/f.target)*100):0;
+    const done=f.current>=f.target && f.target>0;
+    const d=document.createElement('div');
+    d.className='budget-item';
+    d.innerHTML=`<div class="budget-head"><span>🎯 ${esc(f.name)}</span>
+      <span><b class="${done?'safe':''}">${money(f.current)}</b> / ${money(f.target)}</span></div>
+      <div class="progress goal"><div style="width:${pct}%"></div></div>
+      <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+        <button class="btn small" onclick="addToSinking('${f.id}')">＋ Add money</button>
+        <button class="btn small danger" onclick="deleteSinking('${f.id}')">Delete</button>
+      </div>`;
+    el.appendChild(d);
+  });
+}
+function addSinkingFund(){
+  const name=(document.getElementById('sinkName').value||'').trim();
+  const target=Number(document.getElementById('sinkTarget').value)||0;
+  const current=Number(document.getElementById('sinkCurrent').value)||0;
+  if(!name||target<=0){ alert('Name at target required.'); return; }
+  if(!data.sinkingFunds) data.sinkingFunds=[];
+  data.sinkingFunds.push({id:crypto.randomUUID(),name,target,current});
+  save(); render();
+}
+function addToSinking(id){
+  const amt=prompt('Amount to add (₱):');
+  if(amt===null) return;
+  const n=Number(amt);
+  if(!(n>0)) return;
+  const f=(data.sinkingFunds||[]).find(x=>x.id===id);
+  if(f){ f.current=(Number(f.current)||0)+n; save(); render(); }
+}
+function deleteSinking(id){
+  if(!confirm('Delete this sinking fund?')) return;
+  data.sinkingFunds=(data.sinkingFunds||[]).filter(x=>x.id!==id);
+  save(); render();
+}
+
+function htmlEmergency(){
+  return `<div class="actions" style="margin:0 0 12px;flex-wrap:wrap">
+    <label style="display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--text)">Target ₱
+      <input id="emTargetInput" type="number" min="0" step="0.01" style="margin:0;max-width:120px">
+    </label>
+    <label style="display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--text)">Current ₱
+      <input id="emCurrentInput" type="number" min="0" step="0.01" style="margin:0;max-width:120px">
+    </label>
+    <label style="display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--text)">Months of expenses
+      <input id="emMonthsInput" type="number" min="1" max="24" step="1" placeholder="3–6" style="margin:0;max-width:80px">
+    </label>
+    <button class="btn primary" onclick="saveEmergency()">Save</button>
+  </div>
+  <div id="emStatus"></div>`;
+}
+function bindEmergency(){
+  const mt=monthTx().filter(x=>x.type==='expense');
+  const me=total('expense',mt);
+  // suggest based on months * avg - use this month as proxy
+  const months=data.emergencyMonths||3;
+  const suggested=me*months;
+  const tgt=data.emergencyTarget||data.bufferTarget||0;
+  const cur=data.emergencyCurrent||data.bufferCurrent||0;
+  const ti=document.getElementById('emTargetInput');
+  const ci=document.getElementById('emCurrentInput');
+  const mi=document.getElementById('emMonthsInput');
+  if(ti) ti.value=tgt>0?tgt:'';
+  if(ci) ci.value=cur>0?cur:'';
+  if(mi) mi.value=months;
+  const pct=tgt>0?Math.min(100,cur/tgt*100):0;
+  const st=document.getElementById('emStatus');
+  if(st) st.innerHTML=`<div class="muted" style="margin-bottom:8px">Suggested target (${months}× this month expenses): <b>${money(suggested)}</b>
+    <button class="btn small" onclick="document.getElementById('emTargetInput').value=${suggested}">Use</button></div>
+    <div class="budget-item"><div class="budget-head"><span>Emergency fund</span>
+      <span><b class="safe">${money(cur)}</b> / ${money(tgt)} (${tgt?Math.round(cur/tgt*100):0}%)</span></div>
+      <div class="progress goal"><div style="width:${pct}%"></div></div>
+      <div class="muted" style="margin-top:6px">${tgt>cur?'Kulang: '+money(tgt-cur):tgt>0?'✅ Target reached — maintain only.':'I-set ang target.'}</div></div>`;
+}
+function saveEmergency(){
+  data.emergencyTarget=Number(document.getElementById('emTargetInput').value)||0;
+  data.emergencyCurrent=Number(document.getElementById('emCurrentInput').value)||0;
+  data.emergencyMonths=Number(document.getElementById('emMonthsInput').value)||3;
+  // sync buffer for zero-based compatibility
+  data.bufferTarget=data.emergencyTarget;
+  data.bufferCurrent=data.emergencyCurrent;
+  save(); render();
+}
+
+function htmlNwg(){
+  return `<div id="nwgBars" style="margin-bottom:12px"></div>
+  <h3 style="margin:0 0 8px">Assign categories</h3>
+  <div id="nwgList"></div>`;
+}
+function bindNwg(){
+  const spent=monthExpenseByCat();
+  let N=0,W=0,G=0;
+  (data.categories||[]).filter(c=>!['Salary','Side Income'].includes(c)).forEach(cat=>{
+    const r=(data.catRoles&&data.catRoles[cat])||defaultRole(cat);
+    const amt=spent[cat]||0;
+    if(r==='need') N+=amt;
+    else if(r==='want') W+=amt;
+    else if(r==='save'||r==='goal') G+=amt;
+  });
+  const tot=N+W+G||1;
+  const bars=document.getElementById('nwgBars');
+  if(bars) bars.innerHTML=`
+    <div class="budget-item"><div class="budget-head"><span>🏠 Needs</span><b>${money(N)} (${Math.round(N/tot*100)}%)</b></div>
+      <div class="progress"><div style="width:${N/tot*100}%"></div></div></div>
+    <div class="budget-item"><div class="budget-head"><span>✨ Wants</span><b>${money(W)} (${Math.round(W/tot*100)}%)</b></div>
+      <div class="progress"><div style="width:${W/tot*100}%;background:var(--orange)"></div></div></div>
+    <div class="budget-item"><div class="budget-head"><span>🎯 Goals</span><b>${money(G)} (${Math.round(G/tot*100)}%)</b></div>
+      <div class="progress goal"><div style="width:${G/tot*100}%"></div></div></div>`;
+  const list=document.getElementById('nwgList');
+  if(!list) return;
+  list.innerHTML='';
+  (data.categories||[]).filter(c=>!['Salary','Side Income'].includes(c)).forEach(cat=>{
+    const role=(data.catRoles&&data.catRoles[cat])||defaultRole(cat);
+    const map=role==='save'?'goal':role;
+    const d=document.createElement('div');
+    d.className='summaryrow';
+    d.innerHTML=`<span>${esc(cat)} <span class="muted">${spent[cat]?money(spent[cat]):''}</span></span>
+      <select onchange="setCatRole('${esc(cat)}',this.value==='goal'?'save':this.value)" style="width:auto;margin:0;padding:6px 10px">
+        <option value="need" ${map==='need'?'selected':''}>Need</option>
+        <option value="want" ${map==='want'?'selected':''}>Want</option>
+        <option value="goal" ${map==='goal'?'selected':''}>Goal</option>
+      </select>`;
+    list.appendChild(d);
+  });
+}
+
+function htmlDelay24(){
+  return `<div class="actions" style="margin:0 0 12px;flex-wrap:wrap">
+    <input id="d24Name" placeholder="Item name" style="margin:0;max-width:140px">
+    <input id="d24Amt" type="number" min="0" step="0.01" placeholder="₱" style="margin:0;max-width:100px">
+    <button class="btn primary" onclick="addDelay24()">＋ Add to 24h wait</button>
+  </div>
+  <div id="d24List"></div>`;
+}
+function bindDelay24(){
+  const el=document.getElementById('d24List');
+  if(!el) return;
+  const list=data.delay24||[];
+  if(!list.length){ el.innerHTML='<div class="emptymsg">Walang item sa 24-hour waitlist.</div>'; return; }
+  const now=Date.now();
+  el.innerHTML='';
+  list.slice().reverse().forEach(item=>{
+    const created=item.createdAt||0;
+    const left=Math.max(0, 24*60*60*1000 - (now-created));
+    const ready=left===0;
+    const hrs=Math.floor(left/3600000), mins=Math.floor((left%3600000)/60000);
+    const d=document.createElement('div');
+    d.className='tx';
+    d.innerHTML=`<div><div class="tx-title">${esc(item.name)}</div>
+      <span class="tag">${ready?'✅ Ready':'⏳ '+hrs+'h '+mins+'m left'}</span></div>
+      <div class="tx-right"><b>${money(item.amount)}</b><br>
+        ${ready?`<button class="btn small primary" onclick="approveDelay24('${item.id}')">Buy / Log</button>`:''}
+        <button class="btn small danger" onclick="removeDelay24('${item.id}')">Skip</button>
+      </div>`;
+    el.appendChild(d);
+  });
+}
+function addDelay24(){
+  const name=(document.getElementById('d24Name').value||'').trim();
+  const amount=Number(document.getElementById('d24Amt').value)||0;
+  if(!name){ alert('Item name required.'); return; }
+  if(!data.delay24) data.delay24=[];
+  data.delay24.push({id:crypto.randomUUID(),name,amount,createdAt:Date.now()});
+  save(); render();
+}
+function removeDelay24(id){
+  data.delay24=(data.delay24||[]).filter(x=>x.id!==id);
+  save(); render();
+}
+function approveDelay24(id){
+  const item=(data.delay24||[]).find(x=>x.id===id);
+  if(!item) return;
+  data.delay24=data.delay24.filter(x=>x.id!==id);
+  // prefill openTx mentally - push expense
+  data.tx.push({id:crypto.randomUUID(),type:'expense',amount:item.amount||0,date:localDate(),time:localTime(),category:'Shopping',desc:item.name,wallet:data.defaultWallet||'Cash',notes:'24h rule approved'});
+  save(); render();
+  alert('Na-log bilang expense: '+item.name);
+}
+
+function htmlRolling(){
+  return `<div class="actions" style="margin:0 0 12px">
+    <input id="rollBudgetInput" type="number" min="0" step="0.01" placeholder="Monthly budget ₱" style="margin:0;max-width:160px">
+    <button class="btn primary" onclick="saveRollBudget()">Save budget</button>
+  </div>
+  <div id="rollStatus"></div>`;
+}
+function bindRolling(){
+  const inp=document.getElementById('rollBudgetInput');
+  if(inp) inp.value=data.budget>0?data.budget:'';
+  const now=new Date();
+  const thisP=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const lastD=new Date(now.getFullYear(),now.getMonth()-1,1);
+  const lastP=`${lastD.getFullYear()}-${String(lastD.getMonth()+1).padStart(2,'0')}`;
+  const thisExp=data.tx.filter(x=>x.type==='expense'&&x.date.startsWith(thisP)).reduce((s,x)=>s+Number(x.amount),0);
+  const lastExp=data.tx.filter(x=>x.type==='expense'&&x.date.startsWith(lastP)).reduce((s,x)=>s+Number(x.amount),0);
+  const bud=data.budget||0;
+  const lastLeftover=bud>0?Math.max(0,bud-lastExp):0;
+  const available=bud+lastLeftover;
+  const rem=available-thisExp;
+  const st=document.getElementById('rollStatus');
+  if(st) st.innerHTML = bud<=0 ? '<div class="muted">I-set ang monthly budget para sa rolling calculation.</div>' :
+    `<div style="display:grid;gap:8px">
+      <div class="summaryrow"><span>Monthly budget</span><b>${money(bud)}</b></div>
+      <div class="summaryrow"><span>Last month leftover (rolled)</span><b class="safe">${money(lastLeftover)}</b></div>
+      <div class="summaryrow"><span>Available this month</span><b class="net">${money(available)}</b></div>
+      <div class="summaryrow"><span>Spent this month</span><b class="expense">${money(thisExp)}</b></div>
+      <div class="summaryrow"><span>Remaining (rolling)</span><b class="${rem<0?'expense':'safe'}">${money(rem)}</b></div>
+    </div>`;
+}
+function saveRollBudget(){
+  data.budget=Number(document.getElementById('rollBudgetInput').value)||0;
+  save(); render();
+}
+
+function htmlPriority(){
+  return `<div class="actions" style="margin:0 0 12px">
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--text)">Income to allocate
+      <input id="prioIncomeInput" type="number" min="0" step="0.01" style="margin:0;max-width:140px">
+    </label>
+    <button class="btn primary" onclick="savePrioIncome()">Save</button>
+  </div>
+  <p class="muted">I-rank ang categories (1 = highest priority). Allocation ay mula sa taas pababa.</p>
+  <div id="prioList"></div>
+  <div id="prioResult" style="margin-top:12px"></div>`;
+}
+function bindPriority(){
+  const inp=document.getElementById('prioIncomeInput');
+  if(inp) inp.value=data.prioIncome>0?data.prioIncome:(data.zbIncome||'');
+  if(!data.catPriority) data.catPriority={};
+  const cats=(data.categories||[]).filter(c=>!['Salary','Side Income'].includes(c));
+  // default priorities by order
+  cats.forEach((c,i)=>{ if(data.catPriority[c]==null) data.catPriority[c]=i+1; });
+  const list=document.getElementById('prioList');
+  if(!list) return;
+  const sorted=cats.slice().sort((a,b)=>(data.catPriority[a]||99)-(data.catPriority[b]||99));
+  list.innerHTML='';
+  sorted.forEach(cat=>{
+    const d=document.createElement('div');
+    d.className='summaryrow';
+    d.innerHTML=`<span>${esc(cat)}</span>
+      <input type="number" min="1" max="99" value="${data.catPriority[cat]||1}" style="width:70px;margin:0" onchange="setCatPriority('${esc(cat)}',this.value)">`;
+    list.appendChild(d);
+  });
+  // allocation preview
+  const income=data.prioIncome||data.zbIncome||0;
+  const budgets=data.catBudgets||{};
+  let left=income;
+  let rows='';
+  sorted.forEach(cat=>{
+    const want=Number(budgets[cat])||0;
+    const got=Math.min(want, Math.max(0,left));
+    left-=got;
+    rows+=`<div class="summaryrow"><span>#${data.catPriority[cat]} ${esc(cat)}</span><span>${money(got)}${want>got?' <span class="expense">/ need '+money(want)+'</span>':''}</span></div>`;
+  });
+  const res=document.getElementById('prioResult');
+  if(res) res.innerHTML = income<=0 ? '<div class="muted">I-set ang income + category budgets para makita ang allocation.</div>' :
+    `<h3 style="margin:0 0 8px">Allocation preview</h3>${rows}
+     <div class="summaryrow"><span>Unallocated</span><b class="${left>0?'safe':''}">${money(left)}</b></div>`;
+}
+function setCatPriority(cat, val){
+  if(!data.catPriority) data.catPriority={};
+  data.catPriority[cat]=Number(val)||1;
+  save(); render();
+}
+function savePrioIncome(){
+  data.prioIncome=Number(document.getElementById('prioIncomeInput').value)||0;
+  save(); render();
+}
+
+// Keep legacy helpers used above
+function fillEnvelopesEvenly(){
+  const amt=Number(document.getElementById('envIncomeInput').value)||0;
+  if(amt<=0){ alert('Ilagay ang amount na i-distribute.'); return; }
+  const cats=data.categories.filter(c=>!['Salary','Side Income'].includes(c));
+  if(!cats.length){ alert('Walang categories.'); return; }
+  const each=Math.floor((amt/cats.length)*100)/100;
+  cats.forEach(c=>{ data.catBudgets[c]=each; });
+  const used=each*cats.length;
+  if(amt-used>0) data.catBudgets[cats[0]]=(data.catBudgets[cats[0]]||0)+(amt-used);
+  save(); render();
+  alert(`Na-distribute ang ${money(amt)} sa ${cats.length} envelopes (~${money(each)} each).`);
+}
+function renderEnvelopes(){
+  const el=document.getElementById('envelopeList');
+  const sumEl=document.getElementById('envelopeSummary');
+  if(!el) return;
+  const spent=monthExpenseByCat();
+  const entries=Object.entries(data.catBudgets||{}).filter(([,v])=>v>0);
+  if(!entries.length){ el.innerHTML='<div class="emptymsg">Walang envelope pa. Mag-set ng category budget.</div>'; if(sumEl) sumEl.textContent=''; return; }
+  let totalAlloc=0,totalSpent=0,totalRem=0;
+  el.innerHTML='';
+  entries.sort((a,b)=>a[0].localeCompare(b[0])).forEach(([cat,budget])=>{
+    const s=spent[cat]||0; const rem=budget-s;
+    totalAlloc+=budget; totalSpent+=s; totalRem+=rem;
+    const pct=budget>0?Math.min(100,s/budget*100):0; const over=s>budget;
+    const d=document.createElement('div'); d.className='budget-item';
+    d.innerHTML=`<div class="budget-head"><span>✉️ ${esc(cat)}</span>
+      <span><b class="${over?'expense':''}">${money(s)}</b> / ${money(budget)} · <b class="${rem<0?'expense':'safe'}">${money(rem)}</b> left</span></div>
+      <div class="progress ${over?'over':''}"><div style="width:${pct}%"></div></div>`;
+    el.appendChild(d);
+  });
+  if(sumEl) sumEl.innerHTML=`Allocated: <b>${money(totalAlloc)}</b> · Spent: <b class="expense">${money(totalSpent)}</b> · Remaining: <b class="${totalRem<0?'expense':'safe'}">${money(totalRem)}</b>`;
+}
+function saveZbIncome(){ data.zbIncome=Number(document.getElementById('zbIncomeInput').value)||0; save(); render(); }
+function renderZeroBased(){
+  const list=document.getElementById('zbList'); const status=document.getElementById('zbStatus'); const inp=document.getElementById('zbIncomeInput');
+  if(!list||!status) return;
+  if(inp) inp.value=data.zbIncome>0?data.zbIncome:'';
+  const income=data.zbIncome||0;
+  const spent=monthExpenseByCat();
+  const entries=Object.entries(data.catBudgets||{}).filter(([,v])=>v>0);
+  let allocated=entries.reduce((s,[,v])=>s+v,0);
+  const bufferJob=data.bufferTarget||data.emergencyTarget||0;
+  const leftover=income-(allocated+bufferJob);
+  const ok=Math.abs(leftover)<0.5&&income>0;
+  status.innerHTML=income<=0?'<span class="muted">I-set ang planned monthly income.</span>':
+    `<div>Income: <b class="income">${money(income)}</b> · Allocated: <b>${money(allocated)}</b> · Buffer: <b>${money(bufferJob)}</b><br>
+     Leftover: <b class="${ok?'safe':'expense'}">${money(leftover)}</b> ${ok?'✅ Zero-based!':'— adjust until ₱0'}</div>`;
+  list.innerHTML='';
+  entries.sort((a,b)=>a[0].localeCompare(b[0])).forEach(([cat,budget])=>{
+    const d=document.createElement('div'); d.className='summaryrow';
+    d.innerHTML=`<span>${esc(cat)}</span><span><b>${money(budget)}</b> alloc · <b class="expense">${money(spent[cat]||0)}</b> spent</span>`;
+    list.appendChild(d);
+  });
+}
+function saveRuleIncome(){ data.ruleIncome=Number(document.getElementById('ruleIncomeInput').value)||0; save(); render(); }
+function saveBufferFund(){
+  data.bufferTarget=Number(document.getElementById('bufferTargetInput').value)||0;
+  data.bufferCurrent=Number(document.getElementById('bufferCurrentInput').value)||0;
+  save(); render();
+}
+function setCatRole(cat, role){ if(!data.catRoles) data.catRoles={}; data.catRoles[cat]=role; save(); render(); }
+function defaultRole(cat){
+  if(data.catRoles&&data.catRoles[cat]) return data.catRoles[cat];
+  const needs=['Food','Transportation','Bills','Load/Internet','Health','Debt','Rent','Utilities'];
+  const wants=['Shopping','Entertainment','Coffee','Snacks'];
+  if(needs.includes(cat)) return 'need';
+  if(wants.includes(cat)) return 'want';
+  if(['Salary','Side Income'].includes(cat)) return 'ignore';
+  return 'need';
+}
+function renderRule503020(){
+  const bars=document.getElementById('ruleBars'); const catList=document.getElementById('ruleCatList');
+  const buf=document.getElementById('bufferStatus');
+  const ri=document.getElementById('ruleIncomeInput');
+  const bt=document.getElementById('bufferTargetInput'); const bc=document.getElementById('bufferCurrentInput');
+  if(!bars||!catList) return;
+  if(ri) ri.value=data.ruleIncome>0?data.ruleIncome:'';
+  if(bt) bt.value=data.bufferTarget>0?data.bufferTarget:'';
+  if(bc) bc.value=data.bufferCurrent>0?data.bufferCurrent:'';
+  const income=data.ruleIncome||0;
+  const spent=monthExpenseByCat();
+  let need=0,want=0,save=0;
+  Object.entries(spent).forEach(([cat,amt])=>{
+    const r=defaultRole(cat); if(r==='ignore') return;
+    if(r==='need') need+=amt; else if(r==='want') want+=amt; else if(r==='save') save+=amt;
+  });
+  const tNeed=income*0.5,tWant=income*0.3,tSave=income*0.2;
+  function row(label,actual,target,cls){
+    if(income<=0) return `<div class="budget-item"><div class="budget-head"><span>${label}</span><span>${money(actual)}</span></div></div>`;
+    const pct=target>0?Math.min(100,actual/target*100):0; const over=actual>target;
+    return `<div class="budget-item"><div class="budget-head"><span>${label}</span><span><b class="${over?'expense':cls}">${money(actual)}</b> / ${money(target)}</span></div>
+      <div class="progress ${over?'over':''}"><div style="width:${pct}%"></div></div></div>`;
+  }
+  bars.innerHTML=(income<=0?'<div class="muted">I-set ang monthly income.</div>':'')+row('🏠 Needs 50%',need,tNeed,'safe')+row('✨ Wants 30%',want,tWant,'net')+row('💰 Save 20%',save,tSave,'invest');
+  catList.innerHTML='';
+  (data.categories||[]).filter(c=>!['Salary','Side Income'].includes(c)).forEach(cat=>{
+    const role=defaultRole(cat);
+    const d=document.createElement('div'); d.className='summaryrow';
+    d.innerHTML=`<span>${esc(cat)}</span>
+      <select onchange="setCatRole('${esc(cat)}',this.value)" style="width:auto;margin:0;padding:6px 10px">
+        <option value="need" ${role==='need'?'selected':''}>Need 50%</option>
+        <option value="want" ${role==='want'?'selected':''}>Want 30%</option>
+        <option value="save" ${role==='save'?'selected':''}>Save 20%</option>
+      </select>`;
+    catList.appendChild(d);
+  });
+  if(buf){
+    const tgt=data.bufferTarget||0,cur=data.bufferCurrent||0;
+    const pct=tgt>0?Math.min(100,cur/tgt*100):0;
+    buf.innerHTML=tgt<=0&&cur<=0?'<div class="muted">Optional buffer fund.</div>':
+      `<div class="budget-item"><div class="budget-head"><span>Buffer</span><span><b class="safe">${money(cur)}</b> / ${money(tgt)}</span></div>
+       <div class="progress goal"><div style="width:${pct}%"></div></div></div>`;
+  }
+}
+function savePyf(){
+  data.pyfIncome=Number(document.getElementById('pyfIncomeInput').value)||0;
+  data.pyfPct=Number(document.getElementById('pyfPctInput').value)||0;
+  data.pyfFixed=Number(document.getElementById('pyfFixedInput').value)||0;
+  save(); render();
+}
+function renderPyf(){
+  const el=document.getElementById('pyfStatus'); if(!el) return;
+  const incEl=document.getElementById('pyfIncomeInput');
+  const pctEl=document.getElementById('pyfPctInput');
+  const fixEl=document.getElementById('pyfFixedInput');
+  if(incEl) incEl.value=data.pyfIncome>0?data.pyfIncome:'';
+  if(pctEl) pctEl.value=data.pyfPct>0?data.pyfPct:'';
+  if(fixEl) fixEl.value=data.pyfFixed>0?data.pyfFixed:'';
+  const income=data.pyfIncome||0;
+  const saveAmt=Math.max(data.pyfFixed||0, income*((data.pyfPct||0)/100));
+  const spendable=Math.max(0,income-saveAmt);
+  el.innerHTML=income<=0?'<span class="muted">I-set ang income at % o fixed.</span>':
+    `<div>Save first: <b class="safe">${money(saveAmt)}</b> · Spendable: <b class="net">${money(spendable)}</b></div>`;
+}
+
+
+function sortTransactions(list, mode){
+  const arr = list.slice();
+  const timeKey = x => (x.date||'')+'T'+(x.time||'12:00');
+  switch(mode){
+    case 'time-asc': return arr.sort((a,b)=>timeKey(a).localeCompare(timeKey(b)));
+    case 'time-desc': return arr.sort((a,b)=>timeKey(b).localeCompare(timeKey(a)));
+    case 'name-asc': return arr.sort((a,b)=>(a.desc||'').localeCompare(b.desc||''));
+    case 'name-desc': return arr.sort((a,b)=>(b.desc||'').localeCompare(a.desc||''));
+    case 'price-asc': return arr.sort((a,b)=>Number(a.amount)-Number(b.amount));
+    case 'price-desc': return arr.sort((a,b)=>Number(b.amount)-Number(a.amount));
+    case 'category': return arr.sort((a,b)=>(a.category||'').localeCompare(b.category||'') || timeKey(b).localeCompare(timeKey(a)));
+    default: return arr.sort((a,b)=>timeKey(b).localeCompare(timeKey(a)));
+  }
+}
+function formatTime(t){
+  if(!t) return '';
+  const [h,m] = t.split(':').map(Number);
+  if(isNaN(h)) return t;
+  const ampm = h>=12 ? 'PM' : 'AM';
+  const h12 = ((h+11)%12)+1;
+  return h12+':'+String(m||0).padStart(2,'0')+' '+ampm;
+}
+
+function renderTodaySpendList(){
+  const listEl = document.getElementById('todaySpendList');
+  const totalEl = document.getElementById('todaySpendTotal');
+  if(!listEl || !totalEl) return;
+  const today = localDate();
+  const mode = document.getElementById('todaySort')?.value || 'time-desc';
+  const txs = sortTransactions(data.tx.filter(x => x.date === today && x.type === 'expense'), mode);
+  const total = txs.reduce((s,x)=>s+Number(x.amount),0);
+  totalEl.innerHTML = txs.length
+    ? `Total today: <b class="expense">${money(total)}</b> · ${txs.length} item${txs.length>1?'s':''}`
+    : 'Walang gastos pa ngayong araw.';
+  if(!txs.length){
+    listEl.innerHTML = '<div class="emptymsg" style="padding:16px">Tap ＋ Add para mag-log ng expense.</div>';
+    return;
+  }
+  listEl.innerHTML = '';
+  txs.forEach(x => {
+    const div = document.createElement('div');
+    div.className = 'tx';
+    div.innerHTML = `<div><div class="tx-title">${esc(x.desc||x.category||'Expense')} <span class="tx-time">${formatTime(x.time)}</span></div>
+      <span class="tag">${esc(x.category||'')}</span><span class="tag">${esc(x.wallet||'')}</span></div>
+      <div class="tx-right"><b class="expense">−${money(x.amount)}</b><br>
+      <button class="btn small" onclick="editTx('${x.id}')">Edit</button>
+      <button class="btn danger small" onclick="deleteTx('${x.id}')">Delete</button></div>`;
+    listEl.appendChild(div);
+  });
+}
+
+function renderQuickAdd(){
+  const el = document.getElementById('quickAddGrid');
+  if(!el) return;
+  el.innerHTML = '';
+  (data.presets||[]).forEach((p,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'quick-btn';
+    btn.innerHTML = `${p.icon||'💰'} ${esc(p.name)}<span class="qamt">${money(p.amount)}</span>`;
+    btn.onclick = ()=>quickAdd(i);
+    el.appendChild(btn);
+  });
+  if(!(data.presets||[]).length){
+    el.innerHTML = '<div class="emptymsg">Walang presets. Click Edit para mag-add.</div>';
+  }
+}
+
+function quickAdd(idx){
+  const p = data.presets[idx];
+  if(!p) return;
+  const amt = Number(p.amount);
+  if(data.strictMode){
+    const me = total('expense', monthTx());
+    const todayStr = localDate();
+    const todaySpent = total('expense', data.tx.filter(x => x.date === todayStr && x.type === 'expense'));
+    const daysLeft = daysLeftInMonth();
+    const remainingBudget = data.budget ? Math.max(0, data.budget - me) : 0;
+    const autoDaily = data.budget ? remainingBudget / daysLeft : 0;
+    const limit = data.customDailyLimit > 0 ? data.customDailyLimit : autoDaily;
+    let warn = '';
+    if(limit > 0 && (todaySpent + amt) > limit){
+      warn = `Quick Add (${money(amt)}) ay magpapasobra sa DAILY LIMIT.\nToday: ${money(todaySpent)} → ${money(todaySpent+amt)} / Limit: ${money(limit)}`;
+    } else if(data.budget && (me + amt) > data.budget){
+      warn = `Quick Add (${money(amt)}) ay magpapasobra sa monthly budget.\nCurrent: ${money(me)} / ${money(data.budget)}`;
+    }
+    if(warn && !confirm(`⚠️ STRICT MODE\n\n${warn}\n\nItuloy pa rin?`)) return;
+  }
+  data.tx.push({
+    id: crypto.randomUUID(),
+    type: 'expense',
+    amount: Number(p.amount),
+    date: localDate(),
+    time: localTime(),
+    category: p.category || 'Other',
+    desc: p.name,
+    wallet: data.defaultWallet || 'Cash',
+    notes: 'Quick Add'
+  });
+  selectedDate = localDate();
+  save();
+  render();
+}
+
+function renderCompare(){
+  const el = document.getElementById('compareTable');
+  if(!el) return;
+  const now = new Date();
+  const thisPrefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const lastDate = new Date(now.getFullYear(), now.getMonth()-1, 1);
+  const lastPrefix = `${lastDate.getFullYear()}-${String(lastDate.getMonth()+1).padStart(2,'0')}`;
+
+  const thisTx = data.tx.filter(x=>x.date.startsWith(thisPrefix));
+  const lastTx = data.tx.filter(x=>x.date.startsWith(lastPrefix));
+  const thisInc = total('income', thisTx), thisExp = total('expense', thisTx);
+  const lastInc = total('income', lastTx), lastExp = total('expense', lastTx);
+
+  function diff(a,b){
+    const d = a-b;
+    if(d===0) return '<span class="muted">0</span>';
+    return d>0 ? `<span class="income">+${money(d)}</span>` : `<span class="expense">${money(d)}</span>`;
+  }
+
+  el.innerHTML = `
+    <div class="compare-row"><div class="muted"></div><div class="muted"><b>This Month</b></div><div class="muted"><b>Last Month</b></div></div>
+    <div class="compare-row"><div>Income</div><div><b class="income">${money(thisInc)}</b></div><div>${money(lastInc)}</div></div>
+    <div class="compare-row"><div>Expenses</div><div><b class="expense">${money(thisExp)}</b></div><div>${money(lastExp)}</div></div>
+    <div class="compare-row"><div>Net</div><div><b class="net">${money(thisInc-thisExp)}</b></div><div>${money(lastInc-lastExp)}</div></div>
+    <div class="compare-row"><div>Change (Expenses)</div><div colspan="2" style="grid-column:2/-1">${diff(thisExp,lastExp)} vs last month</div></div>
+  `;
+}
+
+function renderWallets(){
+  const el = document.getElementById('walletBalances');
+  el.innerHTML = '';
+  let overallWallets = 0;
+  wallets.forEach(w=>{
+    const bal = walletBalance(w);
+    overallWallets += bal;
+    const d = document.createElement('div');
+    d.className = 'wallet-card';
+    d.innerHTML = `<div class="wname">${w}</div><div class="wbal ${bal<0?'expense':''}">${money(bal)}</div>`;
+    el.appendChild(d);
+  });
+  // Overall total of all wallets
+  const totalCard = document.createElement('div');
+  totalCard.className = 'wallet-card';
+  totalCard.style.cssText = 'grid-column:1/-1;background:var(--hover);border-color:var(--blue)';
+  totalCard.innerHTML = `<div class="wname">Overall (All Wallets)</div><div class="wbal ${overallWallets<0?'expense':'net'}" style="font-size:1.15rem">${money(overallWallets)}</div>`;
+  el.appendChild(totalCard);
+}
+
+function renderCalendar(){
+  const el = document.getElementById('calendar'); el.innerHTML='';
+  const y=view.getFullYear(), m=view.getMonth();
+  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
+  for(let i=0;i<first;i++){ const d=document.createElement('div'); d.className='day empty'; el.appendChild(d); }
+  for(let n=1;n<=days;n++){
+    const dt=`${y}-${String(m+1).padStart(2,'0')}-${String(n).padStart(2,'0')}`;
+    const tx=data.tx.filter(x=>x.date===dt && x.type!=='transfer');
+    const inc=total('income',tx), exp=total('expense',tx);
+    const d=document.createElement('button');
+    d.className='day '+(dt===selectedDate?'selected ':'')+(dt===localDate()?'today':'');
+    d.onclick=()=>{ selectedDate=dt; render(); };
+    d.innerHTML=`<div class="num">${n}</div>${inc?`<div class="dot i">+${money(inc)}</div>`:''}${exp?`<div class="dot e">−${money(exp)}</div>`:''}`;
+    el.appendChild(d);
+  }
+}
+
+function renderDay(){
+  const search=(document.getElementById('searchInput')?.value||'').toLowerCase().trim();
+  const fWallet=document.getElementById('filterWallet')?.value||'';
+  const fType=document.getElementById('filterType')?.value||'';
+  let tx=data.tx.filter(x=>x.date===selectedDate);
+  if(fWallet) tx=tx.filter(x=>x.wallet===fWallet||x.from===fWallet||x.to===fWallet);
+  if(fType) tx=tx.filter(x=>x.type===fType);
+  if(search) tx=tx.filter(x=>(x.desc||'').toLowerCase().includes(search)||(x.notes||'').toLowerCase().includes(search));
+  const daySortMode = document.getElementById('daySort')?.value || 'time-desc';
+  tx = sortTransactions(tx, daySortMode);
+
+  const normal=tx.filter(x=>x.type!=='transfer');
+  const inc=total('income',normal), exp=total('expense',normal);
+
+  // Per-day daily limit record (each date has its own spent/remaining)
+  const meMonth = total('expense', monthTx());
+  const daysLeft = daysLeftInMonth();
+  const remBudget = data.budget ? Math.max(0, data.budget - meMonth) : 0;
+  const autoDaily = data.budget ? remBudget / daysLeft : 0;
+  const dayLimit = (data.customDailyLimit > 0) ? data.customDailyLimit : autoDaily;
+  const dayRemaining = dayLimit - exp;
+  const dayOver = dayLimit > 0 && exp > dayLimit;
+  const isToday = selectedDate === localDate();
+
+  document.getElementById('dayTitle').textContent='📅 '+new Date(selectedDate+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(isToday?' (Today)':'');
+  let dayLimitHtml = '';
+  if(dayLimit > 0){
+    dayLimitHtml = `<br>Daily limit: <b>${money(dayLimit)}</b> · Spent: <b class="expense">${money(exp)}</b> · Remaining: <b class="${dayOver?'expense':'safe'}">${money(dayRemaining)}</b>${dayOver?' <b class="expense">⚠️ OVER</b>':''}`;
+  }
+  document.getElementById('dayTotals').innerHTML=`Income: <b class="income">${money(inc)}</b> &nbsp; Expenses: <b class="expense">${money(exp)}</b> &nbsp; Net: <b class="net">${money(inc-exp)}</b>${dayLimitHtml}`;
+
+  const el=document.getElementById('dayList');
+  el.innerHTML=tx.length?'':'<div class="emptymsg">Walang transaction sa araw na ito.</div>';
+  tx.slice().reverse().forEach(x=>{
+    const div=document.createElement('div'); div.className='tx';
+    if(x.type==='transfer'){
+      div.innerHTML=`<div><div class="tx-title">⇄ Transfer: ${esc(x.from)} → ${esc(x.to)}</div><span class="tag">Transfer</span>${x.notes?`<div class="muted">${esc(x.notes)}</div>`:''}</div>
+        <div class="tx-right"><b class="net">${money(x.amount)}</b><br><button class="btn danger small" onclick="deleteTx('${x.id}')">Delete</button></div>`;
+    } else {
+      div.innerHTML=`<div><div class="tx-title">${esc(x.desc)}${x.recurringId?'<span class="recurring-badge">🔁</span>':''} <span class="tx-time">${formatTime(x.time)}</span></div>
+        <span class="tag">${esc(x.category)}</span><span class="tag">${esc(x.wallet)}</span>${x.notes?`<div class="muted">${esc(x.notes)}</div>`:''}</div>
+        <div class="tx-right"><b class="${x.type==='income'?'income':'expense'}">${x.type==='income'?'+':'−'}${money(x.amount)}</b><br>
+        <button class="btn small" onclick="editTx('${x.id}')">Edit</button> <button class="btn danger small" onclick="deleteTx('${x.id}')">Delete</button></div>`;
+    }
+    el.appendChild(div);
+  });
+}
+
+function renderCategories(){
+  const mt=monthTx().filter(x=>x.type==='expense');
+  const sums={}; mt.forEach(x=>sums[x.category]=(sums[x.category]||0)+Number(x.amount));
+  const arr=Object.entries(sums).sort((a,b)=>b[1]-a[1]);
+  const el=document.getElementById('categories');
+  el.innerHTML=arr.length?'':'<div class="emptymsg">Wala pang expenses ngayong buwan.</div>';
+  if(!arr.length) return;
+  const totalExp=arr.reduce((s,[,v])=>s+v,0) || 1;
+  const chart=document.createElement('div'); chart.className='chart-bars';
+  arr.forEach(([c,v])=>{
+    // % of total monthly expenses (accurate share)
+    const pctOfTotal = totalExp > 0 ? (v / totalExp * 100) : 0;
+    const barWidth = Math.min(100, pctOfTotal);
+    const row=document.createElement('div'); row.className='chart-row';
+    row.innerHTML=`<div>${esc(c)}</div><div class="chart-bar"><div style="width:${barWidth}%"></div></div>
+      <div style="text-align:right"><b>${money(v)}</b><br><span class="muted">${pctOfTotal.toFixed(1)}% of total</span></div>`;
+    chart.appendChild(row);
+  });
+  el.appendChild(chart);
+}
+
+function renderCatBudgets(){
+  const el=document.getElementById('catBudgetList');
+  const mt=monthTx().filter(x=>x.type==='expense');
+  const spent={}; mt.forEach(x=>spent[x.category]=(spent[x.category]||0)+Number(x.amount));
+  const entries=Object.entries(data.catBudgets||{}).filter(([,v])=>v>0);
+  if(!entries.length){ el.innerHTML='<div class="emptymsg">Wala pang category budget.</div>'; return; }
+  el.innerHTML='';
+  entries.sort((a,b)=>a[0].localeCompare(b[0])).forEach(([cat,budget])=>{
+    const s = spent[cat] || 0;
+    // Exact % spent of this category's budget (can exceed 100%)
+    const pctExact = budget > 0 ? (s / budget * 100) : 0;
+    const barWidth = Math.min(100, pctExact); // bar caps at 100% visually
+    const over = s > budget;
+    const d=document.createElement('div'); d.className='budget-item';
+    d.innerHTML=`<div class="budget-head">
+        <span>${esc(cat)}</span>
+        <span><b class="${over?'expense':''}">${money(s)}</b> / ${money(budget)} · <b class="${over?'expense':''}">${pctExact.toFixed(1)}%</b> ${over?'⚠️':''}</span>
+      </div>
+      <div class="progress ${over?'over':''}"><div style="width:${barWidth}%"></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+        <span class="muted small">${over ? 'Sobra: '+money(s-budget) : 'Natitira: '+money(Math.max(0,budget-s))}</span>
+        <button class="btn small danger" onclick="removeCatBudget('${esc(cat)}')">Remove</button>
+      </div>`;
+    el.appendChild(d);
+  });
+}
+
+function renderGoals(){
+  const el=document.getElementById('goalsList');
+  if(!data.goals.length){ el.innerHTML='<div class="emptymsg">Wala pang savings goal. Mag-add ka para mag-track!</div>'; return; }
+  el.innerHTML='';
+  data.goals.forEach(g=>{
+    const pct=Math.min(100,(g.current/g.target)*100);
+    const done=g.current>=g.target;
+    const d=document.createElement('div'); d.className='goal-card';
+    d.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div><h3>${esc(g.name)} ${done?'✅':''}</h3>
+        <div class="muted">${money(g.current)} / ${money(g.target)} ${g.date?'• Target: '+g.date:''}</div>
+        ${g.notes?`<div class="muted small">${esc(g.notes)}</div>`:''}
+      </div>
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        <button class="btn small primary" onclick="addToGoal('${g.id}')">＋ Add</button>
+        <button class="btn small" onclick="editGoal('${g.id}')">Edit</button>
+        <button class="btn small danger" onclick="deleteGoal('${g.id}')">Del</button>
+      </div>
+    </div>
+    <div class="progress goal" style="margin-top:10px"><div style="width:${pct}%"></div></div>
+    <div class="small muted" style="margin-top:4px">${Math.round(pct)}% complete</div>`;
+    el.appendChild(d);
+  });
+}
+
+function renderDebts(){
+  const el=document.getElementById('debtsList');
+  if(!data.debts.length){ el.innerHTML='<div class="emptymsg">Wala pang naka-track na utang.</div>'; return; }
+  el.innerHTML='';
+  let totalRemaining=0;
+  data.debts.forEach(d=>{
+    totalRemaining += Number(d.remaining)||0;
+    const pct = d.total>0 ? Math.min(100, ((d.total-d.remaining)/d.total)*100) : 0;
+    const paid = d.remaining<=0;
+    const card=document.createElement('div'); card.className='debt-card';
+    card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div><h3>${esc(d.name)} ${paid?'✅ Paid':''}</h3>
+        <div class="muted">Remaining: <b class="expense">${money(d.remaining)}</b> / Original: ${money(d.total)}</div>
+        ${d.notes?`<div class="muted small">${esc(d.notes)}</div>`:''}
+      </div>
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        ${!paid?`<button class="btn small primary" onclick="openPayDebt('${d.id}')">💵 Pay</button>`:''}
+        <button class="btn small" onclick="editDebt('${d.id}')">Edit</button>
+        <button class="btn small danger" onclick="deleteDebt('${d.id}')">Del</button>
+      </div>
+    </div>
+    <div class="progress" style="margin-top:10px"><div style="width:${pct}%;background:var(--green)"></div></div>
+    <div class="small muted" style="margin-top:4px">${Math.round(pct)}% paid</div>`;
+    el.appendChild(card);
+  });
+  if(data.debts.length){
+    const sum=document.createElement('div');
+    sum.className='summaryrow'; sum.style.marginTop='12px';
+    sum.innerHTML=`<span><b>Total Remaining Debts</b></span><b class="expense">${money(totalRemaining)}</b>`;
+    el.appendChild(sum);
+  }
+}
+
+function renderRecurring(){
+  const el=document.getElementById('recurringList');
+  if(!data.recurring.length){ el.innerHTML='<div class="emptymsg">Wala pang recurring transaction.</div>'; return; }
+  el.innerHTML='';
+  data.recurring.forEach(r=>{
+    const already=data.tx.some(t=>t.recurringId===r.id && t.date.startsWith(`${view.getFullYear()}-${String(view.getMonth()+1).padStart(2,'0')}`));
+    const div=document.createElement('div'); div.className='tx';
+    div.innerHTML=`<div><div class="tx-title">${esc(r.desc)} <span class="recurring-badge">Monthly</span></div>
+      <span class="tag">${esc(r.category)}</span><span class="tag">${esc(r.wallet)}</span><span class="tag">${r.type}</span></div>
+      <div class="tx-right"><b class="${r.type==='income'?'income':'expense'}">${r.type==='income'?'+':'−'}${money(r.amount)}</b><br>
+      ${already?'<span class="muted small">✓ Added this month</span>':`<button class="btn primary small" onclick="addRecurringThisMonth('${r.id}')">＋ Add this month</button>`}
+      <button class="btn danger small" onclick="deleteRecurring('${r.id}')">Delete</button></div>`;
+    el.appendChild(div);
+  });
+}
+
+function switchTab(name, btn){
+  document.querySelectorAll('#sec-categories .tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tabSpend').style.display = name==='spend'?'':'none';
+  document.getElementById('tabBudget').style.display = name==='budget'?'':'none';
+}
+
+function populateSelects(){
+  const catOpts = data.categories.map(x=>`<option>${x}</option>`).join('');
+  const walOpts = wallets.map(x=>`<option>${x}</option>`).join('');
+  ['category','rCategory','cbCategory'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=catOpts; });
+  ['wallet','rWallet','tfFrom','tfTo','payWallet'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=walOpts; });
+}
+
+function localTime(d=new Date()){
+  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+function openTx(date=selectedDate){
+  document.getElementById('editId').value='';
+  document.getElementById('modalTitle').textContent='Add Transaction';
+  document.getElementById('txForm').reset();
+  document.getElementById('date').value=date;
+  document.getElementById('time').value=localTime();
+  document.getElementById('type').value='expense';
+  document.getElementById('isRecurring').checked=false;
+  populateSelects();
+  document.getElementById('modal').classList.add('show');
+}
+function editTx(id){
+  const x=data.tx.find(a=>a.id===id); if(!x||x.type==='transfer') return;
+  populateSelects();
+  document.getElementById('editId').value=id;
+  document.getElementById('modalTitle').textContent='Edit Transaction';
+  ['type','amount','date','time','category','desc','wallet','notes'].forEach(k=>document.getElementById(k).value=x[k]??'');
+  if(!x.time) document.getElementById('time').value='12:00';
+  document.getElementById('isRecurring').checked=!!x.recurringId;
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+
+document.getElementById('txForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const id=document.getElementById('editId').value;
+  const amt = Number(amount.value);
+  const txType = type.value;
+
+  // Strict mode checks for new expenses
+  if(!id && txType==='expense' && data.strictMode){
+    const me = total('expense', monthTx());
+    const todayStr = localDate();
+    const todaySpent = total('expense', data.tx.filter(x => x.date === todayStr && x.type === 'expense'));
+    const daysLeft = (() => { const n=new Date(); return Math.max(1, new Date(n.getFullYear(),n.getMonth()+1,0).getDate()-n.getDate()+1); })();
+    const remainingBudget = data.budget ? Math.max(0, data.budget - me) : 0;
+    const autoDaily = data.budget ? remainingBudget / daysLeft : 0;
+    const limit = data.customDailyLimit > 0 ? data.customDailyLimit : autoDaily;
+    let warn = '';
+    if(limit > 0 && (todaySpent + amt) > limit){
+      warn = `Ang expense na ito (${money(amt)}) ay magpapasobra sa DAILY LIMIT ngayong araw.\nToday spent: ${money(todaySpent)} + ${money(amt)} = ${money(todaySpent+amt)}\nDaily limit: ${money(limit)}`;
+    } else if(data.budget && (me + amt) > data.budget){
+      warn = `Ang expense na ito (${money(amt)}) ay magpapasobra sa monthly budget.\nCurrent: ${money(me)} / ${money(data.budget)}`;
+    }
+    if(warn && !confirm(`⚠️ STRICT MODE\n\n${warn}\n\nSigurado ka bang itutuloy?`)) return;
+  }
+
+  const makeRecurring=document.getElementById('isRecurring').checked;
+  let recurringId=null;
+  if(makeRecurring && !id){
+    const r={id:crypto.randomUUID(),type:txType,amount:amt,category:category.value,desc:desc.value.trim(),wallet:wallet.value,notes:notes.value.trim()};
+    data.recurring.push(r); recurringId=r.id;
+  }
+  const x={id:id||crypto.randomUUID(),type:txType,amount:amt,date:date.value,time:(document.getElementById('time').value||'12:00'),category:category.value,desc:desc.value.trim(),wallet:wallet.value,notes:notes.value.trim(),
+    recurringId:recurringId||(id?(data.tx.find(t=>t.id===id)?.recurringId||null):null)};
+  if(id) data.tx=data.tx.map(a=>a.id===id?x:a); else data.tx.push(x);
+  selectedDate=x.date; save(); closeModal(); render();
+});
+
+function deleteTx(id){ if(confirm('Burahin ang transaction na ito?')){ data.tx=data.tx.filter(x=>x.id!==id); save(); render(); } }
+
+function openStarting(){
+  const form=document.getElementById('startForm'); form.innerHTML='';
+  wallets.forEach(w=>{
+    const row=document.createElement('div'); row.className='row';
+    row.innerHTML=`<label for="start_${w}">${w}</label><input id="start_${w}" type="number" min="0" step="0.01" value="${data.starting[w]||0}">`;
+    form.appendChild(row);
+  });
+  document.getElementById('startModal').classList.add('show');
+}
+function closeStartModal(){ document.getElementById('startModal').classList.remove('show'); }
+function saveStarting(){ wallets.forEach(w=>data.starting[w]=Number(document.getElementById('start_'+w).value)||0); save(); closeStartModal(); render(); }
+
+function openTransfer(){ populateSelects(); document.getElementById('transferForm').reset(); document.getElementById('tfDate').value=selectedDate||localDate(); document.getElementById('transferModal').classList.add('show'); }
+function closeTransferModal(){ document.getElementById('transferModal').classList.remove('show'); }
+document.getElementById('transferForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const from=tfFrom.value, to=tfTo.value, amount=Number(tfAmount.value), date=tfDate.value, notes=tfNotes.value.trim();
+  if(from===to){ alert('From at To ay magkaiba dapat.'); return; }
+  data.tx.push({id:crypto.randomUUID(),type:'transfer',amount,date,from,to,notes,desc:`Transfer ${from} → ${to}`,category:'Transfer',wallet:from});
+  selectedDate=date; save(); closeTransferModal(); render();
+});
+
+function openInvestment(){
+  document.getElementById('investValue').value = data.investment || 0;
+  document.getElementById('investNotes').value = data.investNotes || '';
+  document.getElementById('investModal').classList.add('show');
+}
+function closeInvestModal(){ document.getElementById('investModal').classList.remove('show'); }
+document.getElementById('investForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  data.investment = Number(document.getElementById('investValue').value)||0;
+  data.investNotes = document.getElementById('investNotes').value.trim();
+  save(); closeInvestModal(); render();
+});
+
+function openCategories(){
+  renderCatManage();
+  document.getElementById('catModal').classList.add('show');
+}
+function closeCatModal(){ document.getElementById('catModal').classList.remove('show'); }
+function renderCatManage(){
+  const el=document.getElementById('catManageList');
+  el.innerHTML='';
+  data.categories.forEach(c=>{
+    const used = data.tx.some(t=>t.category===c) || data.recurring.some(r=>r.category===c);
+    const row=document.createElement('div'); row.className='tx';
+    row.innerHTML=`<div class="tx-title">${esc(c)}</div>
+      <div>${used?'<span class="muted small">In use</span>':`<button class="btn danger small" onclick="deleteCategory('${esc(c)}')">Delete</button>`}</div>`;
+    el.appendChild(row);
+  });
+}
+function addCategory(){
+  const name=document.getElementById('newCatName').value.trim();
+  if(!name) return;
+  if(data.categories.includes(name)){ alert('Existing na ang category.'); return; }
+  data.categories.push(name); save(); document.getElementById('newCatName').value=''; renderCatManage(); populateSelects();
+}
+function deleteCategory(name){
+  if(confirm(`Delete category "${name}"?`)){ data.categories=data.categories.filter(c=>c!==name); delete data.catBudgets[name]; save(); renderCatManage(); }
+}
+
+function openCatBudget(){ populateSelects(); document.getElementById('catBudgetForm').reset(); document.getElementById('catBudgetModal').classList.add('show'); }
+function closeCatBudgetModal(){ document.getElementById('catBudgetModal').classList.remove('show'); }
+document.getElementById('catBudgetForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  data.catBudgets[cbCategory.value]=Number(cbAmount.value)||0;
+  save(); closeCatBudgetModal(); render();
+  document.querySelectorAll('#sec-categories .tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#sec-categories .tab')[1].classList.add('active');
+  document.getElementById('tabSpend').style.display='none'; document.getElementById('tabBudget').style.display='';
+});
+function removeCatBudget(cat){ if(confirm(`Remove budget for ${cat}?`)){ delete data.catBudgets[cat]; save(); render(); } }
+
+function openGoal(id=null){
+  document.getElementById('goalForm').reset();
+  document.getElementById('goalId').value='';
+  document.getElementById('goalModalTitle').textContent='🎯 Add Savings Goal';
+  if(id){
+    const g=data.goals.find(x=>x.id===id); if(!g) return;
+    document.getElementById('goalId').value=id;
+    document.getElementById('goalModalTitle').textContent='Edit Savings Goal';
+    document.getElementById('goalName').value=g.name;
+    document.getElementById('goalTarget').value=g.target;
+    document.getElementById('goalCurrent').value=g.current;
+    document.getElementById('goalDate').value=g.date||'';
+    document.getElementById('goalNotes').value=g.notes||'';
+  }
+  document.getElementById('goalModal').classList.add('show');
+}
+function closeGoalModal(){ document.getElementById('goalModal').classList.remove('show'); }
+function editGoal(id){ openGoal(id); }
+document.getElementById('goalForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const id=document.getElementById('goalId').value;
+  const g={id:id||crypto.randomUUID(), name:goalName.value.trim(), target:Number(goalTarget.value), current:Number(goalCurrent.value)||0, date:goalDate.value||'', notes:goalNotes.value.trim()};
+  if(id) data.goals=data.goals.map(x=>x.id===id?g:x); else data.goals.push(g);
+  save(); closeGoalModal(); render();
+});
+function addToGoal(id){
+  const g=data.goals.find(x=>x.id===id); if(!g) return;
+  const amt=prompt(`Magkano idadagdag sa "${g.name}"?`, '1000');
+  if(amt===null||isNaN(amt)) return;
+  g.current = (Number(g.current)||0) + Number(amt);
+  save(); render();
+}
+function deleteGoal(id){ if(confirm('Burahin ang goal na ito?')){ data.goals=data.goals.filter(g=>g.id!==id); save(); render(); } }
+
+function openDebt(id=null){
+  document.getElementById('debtForm').reset();
+  document.getElementById('debtId').value='';
+  document.getElementById('debtModalTitle').textContent='💳 Add Debt / Utang';
+  if(id){
+    const d=data.debts.find(x=>x.id===id); if(!d) return;
+    document.getElementById('debtId').value=id;
+    document.getElementById('debtModalTitle').textContent='Edit Debt';
+    document.getElementById('debtName').value=d.name;
+    document.getElementById('debtTotal').value=d.total;
+    document.getElementById('debtRemaining').value=d.remaining;
+    document.getElementById('debtNotes').value=d.notes||'';
+  }
+  document.getElementById('debtModal').classList.add('show');
+}
+function closeDebtModal(){ document.getElementById('debtModal').classList.remove('show'); }
+function editDebt(id){ openDebt(id); }
+document.getElementById('debtForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const id=document.getElementById('debtId').value;
+  const d={id:id||crypto.randomUUID(), name:debtName.value.trim(), total:Number(debtTotal.value), remaining:Number(debtRemaining.value), notes:debtNotes.value.trim()};
+  if(id) data.debts=data.debts.map(x=>x.id===id?d:x); else data.debts.push(d);
+  save(); closeDebtModal(); render();
+});
+function deleteDebt(id){ if(confirm('Burahin ang debt na ito?')){ data.debts=data.debts.filter(d=>d.id!==id); save(); render(); } }
+
+function openPayDebt(id){
+  const d=data.debts.find(x=>x.id===id); if(!d) return;
+  populateSelects();
+  document.getElementById('payDebtId').value=id;
+  document.getElementById('payDebtInfo').textContent=`${d.name} — Remaining: ${money(d.remaining)}`;
+  document.getElementById('payAmount').value='';
+  document.getElementById('payDate').value=localDate();
+  document.getElementById('payNotes').value='';
+  document.getElementById('payDebtModal').classList.add('show');
+}
+function closePayDebtModal(){ document.getElementById('payDebtModal').classList.remove('show'); }
+document.getElementById('payDebtForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const id=document.getElementById('payDebtId').value;
+  const d=data.debts.find(x=>x.id===id); if(!d) return;
+  const amt=Number(document.getElementById('payAmount').value);
+  const date=document.getElementById('payDate').value;
+  const wallet=document.getElementById('payWallet').value;
+  const notes=document.getElementById('payNotes').value.trim();
+  if(amt<=0) return;
+  d.remaining = Math.max(0, Number(d.remaining)-amt);
+  data.tx.push({
+    id:crypto.randomUUID(), type:'expense', amount:amt, date, category:'Debt',
+    desc:`Payment: ${d.name}`, wallet, notes: notes||`Debt payment for ${d.name}`
+  });
+  selectedDate=date; save(); closePayDebtModal(); render();
+});
+
+function openRecurring(){ populateSelects(); document.getElementById('recurringForm').reset(); document.getElementById('recurringModal').classList.add('show'); }
+function closeRecurringModal(){ document.getElementById('recurringModal').classList.remove('show'); }
+document.getElementById('recurringForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  data.recurring.push({id:crypto.randomUUID(),type:rType.value,amount:Number(rAmount.value),category:rCategory.value,desc:rDesc.value.trim(),wallet:rWallet.value,notes:rNotes.value.trim()});
+  save(); closeRecurringModal(); render();
+});
+function addRecurringThisMonth(rid){
+  const r=data.recurring.find(x=>x.id===rid); if(!r) return;
+  const y=view.getFullYear(), m=String(view.getMonth()+1).padStart(2,'0');
+  let day='01';
+  if(y===new Date().getFullYear() && view.getMonth()===new Date().getMonth()) day=String(new Date().getDate()).padStart(2,'0');
+  const date=`${y}-${m}-${day}`;
+  data.tx.push({id:crypto.randomUUID(),type:r.type,amount:r.amount,date,category:r.category,desc:r.desc,wallet:r.wallet,notes:r.notes,recurringId:r.id});
+  selectedDate=date; save(); render();
+}
+function deleteRecurring(id){ if(confirm('Burahin ang recurring template?')){ data.recurring=data.recurring.filter(r=>r.id!==id); save(); render(); } }
+
+function saveBudget(){ data.budget=Number(document.getElementById('budgetInput').value)||0; save(); render(); }
+function saveWeeklyBudget(){ data.weeklyBudget=Number(document.getElementById('weeklyBudgetInput').value)||0; save(); render(); }
+function saveDailyBudget(){
+  data.customDailyLimit=Number(document.getElementById('dailyBudgetInput').value)||0;
+  save(); render();
+}
+function changeMonth(n){ view.setMonth(view.getMonth()+n); selectedDate=localDate(new Date(view.getFullYear(),view.getMonth(),Math.min(new Date().getDate(),new Date(view.getFullYear(),view.getMonth()+1,0).getDate()))); render(); }
+
+function exportJSON(){ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`wallet-backup-${localDate()}.json`; a.click(); URL.revokeObjectURL(a.href); }
+function exportCSV(){
+  const rows=[['Date','Type','Amount','Category','Description','Wallet','From','To','Notes'],...data.tx.map(x=>[x.date,x.type,x.amount,x.category||'',x.desc||'',x.wallet||'',x.from||'',x.to||'',x.notes||''])];
+  const csv=rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`wallet-transactions-${localDate()}.csv`; a.click(); URL.revokeObjectURL(a.href);
+}
+function importJSON(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const x=JSON.parse(r.result); if(!Array.isArray(x.tx)) throw Error();
+      if(confirm('Import will replace current data. Continue?')){
+        let start=emptyStarting();
+        if(typeof x.starting==='number') start.Cash=Number(x.starting)||0;
+        else if(x.starting&&typeof x.starting==='object') Object.assign(start,x.starting);
+        data={starting:start, investment:Number(x.investment)||0, investNotes:x.investNotes||'', budget:Number(x.budget)||0,
+          catBudgets:x.catBudgets||{}, categories:Array.isArray(x.categories)&&x.categories.length?x.categories:[...DEFAULT_CATS],
+          recurring:Array.isArray(x.recurring)?x.recurring:[], goals:Array.isArray(x.goals)?x.goals:[], debts:Array.isArray(x.debts)?x.debts:[],
+          presets:Array.isArray(x.presets)&&x.presets.length?x.presets:[...DEFAULT_PRESETS],
+          strictMode:!!x.strictMode, defaultWallet:x.defaultWallet||'Cash',
+          customDailyLimit:Number(x.customDailyLimit)||0, weeklyBudget:Number(x.weeklyBudget)||0, zbIncome:Number(x.zbIncome)||0, ruleIncome:Number(x.ruleIncome)||0, catRoles:x.catRoles&&typeof x.catRoles==='object'?x.catRoles:{}, bufferTarget:Number(x.bufferTarget)||0, bufferCurrent:Number(x.bufferCurrent)||0,
+          tx:x.tx, sectionOrder:Array.isArray(x.sectionOrder)?x.sectionOrder:[...DEFAULT_SECTIONS], collapsed:x.collapsed||{},drawerOrder:Array.isArray(x.drawerOrder)&&x.drawerOrder.length?x.drawerOrder:DEFAULT_DRAWER.map(d=>d.route)};
+        save(); render(); alert('Import successful.');
+      }
+    }catch{ alert('Invalid wallet JSON backup.'); }
+    e.target.value='';
+  };
+  r.readAsText(f);
+}
+function clearAll(){ if(confirm('Buburahin ang LAHAT ng data?')){ data={starting:emptyStarting(),investment:0,investNotes:'',budget:0,catBudgets:{},categories:[...DEFAULT_CATS],recurring:[],goals:[],debts:[],presets:[...DEFAULT_PRESETS],strictMode:false,defaultWallet:'Cash',customDailyLimit:0,weeklyBudget:0,zbIncome:0,ruleIncome:0,catRoles:{},bufferTarget:0,bufferCurrent:0,pyfIncome:0,pyfPct:0,pyfFixed:0,sinkingFunds:[],delay24:[],emergencyTarget:0,emergencyCurrent:0,emergencyMonths:3,prioIncome:0,catPriority:{},tx:[],sectionOrder:[...DEFAULT_SECTIONS],collapsed:{},drawerOrder:DEFAULT_DRAWER.map(d=>d.route)}; save(); render(); } }
+function esc(s){ return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+
+
+// ========== PRESETS ==========
+function openPresets(){
+  const sel = document.getElementById('defaultWalletSelect');
+  sel.innerHTML = wallets.map(w=>`<option value="${w}">${w}</option>`).join('');
+  sel.value = data.defaultWallet || 'Cash';
+  document.getElementById('pCategory').innerHTML = data.categories.map(c=>`<option>${c}</option>`).join('');
+  document.getElementById('pName').value = '';
+  document.getElementById('pAmount').value = '';
+  document.getElementById('pIcon').value = '';
+  renderPresetsList();
+  document.getElementById('presetsModal').classList.add('show');
+}
+function closePresetsModal(){
+  data.defaultWallet = document.getElementById('defaultWalletSelect').value;
+  save();
+  document.getElementById('presetsModal').classList.remove('show');
+  render();
+}
+function renderPresetsList(){
+  const el = document.getElementById('presetsList');
+  el.innerHTML = '';
+  (data.presets||[]).forEach((p,i)=>{
+    const row = document.createElement('div');
+    row.className = 'tx';
+    row.innerHTML = `<div><div class="tx-title">${p.icon||''} ${esc(p.name)}</div><span class="tag">${esc(p.category)}</span></div>
+      <div class="tx-right"><b class="expense">${money(p.amount)}</b><br>
+      <button class="btn danger small" onclick="deletePreset(${i})">Delete</button></div>`;
+    el.appendChild(row);
+  });
+  if(!(data.presets||[]).length) el.innerHTML = '<div class="emptymsg">Walang presets pa.</div>';
+}
+function addPreset(){
+  const name = document.getElementById('pName').value.trim();
+  const amount = Number(document.getElementById('pAmount').value);
+  const category = document.getElementById('pCategory').value;
+  const icon = document.getElementById('pIcon').value.trim() || '💰';
+  if(!name || !amount){ alert('Name at Amount required.'); return; }
+  data.presets.push({name, amount, category, icon});
+  save();
+  document.getElementById('pName').value = '';
+  document.getElementById('pAmount').value = '';
+  document.getElementById('pIcon').value = '';
+  renderPresetsList();
+}
+function deletePreset(i){
+  if(confirm('Delete this preset?')){
+    data.presets.splice(i,1);
+    save();
+    renderPresetsList();
+  }
+}
+
+// Update clearAll and import for new fields
+const _origClearAll = typeof clearAll === 'function' ? clearAll : null;
+
+// Safe boot — refresh-safe (data + UI stay)
+function bootApp(){
+  // 1) Route FIRST so something is always visible after reload
+  try {
+    // Restore the last screen from local storage only.
+    // Never rewrite the file URL/history because some Android file viewers
+    // cannot reopen the temporary URL after a browser refresh.
+    const route = loadSavedRoute() || 'home';
+    saveRoute(route);
+    applyRoute(route);
+  } catch(e){
+    console.error('route', e);
+    const home = document.getElementById('page-home');
+    if(home) home.classList.add('route-active');
+  }
+
+  try { populateSelects(); } catch(e){ console.error('populateSelects', e); }
+  try { render(); } catch(e){
+    console.error('render', e);
+    const w = document.querySelector('.wrap') || document.body;
+    if(w){
+      const err = document.createElement('div');
+      err.className = 'card';
+      err.style.marginTop = '12px';
+      err.innerHTML = '<b>May error sa pag-load.</b> Hard refresh: Ctrl+Shift+R<br><button class="btn primary" style="margin-top:10px" onclick="location.reload()">Refresh</button>';
+      w.prepend(err);
+    }
+  }
+}
+
+window.addEventListener('pagehide', () => { try{ save(); }catch(e){} });
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden'){ try{ save(); }catch(e){} } });
+
+bootApp();
+</script>
+<script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
